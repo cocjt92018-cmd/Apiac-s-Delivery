@@ -1,0 +1,2760 @@
+const SUPABASE_URL = 'https://mbgwkfzzkksfpzbjttwu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_O9qQeAbT9DxbQz8Id2PwJg_pz3Ln0gY';
+
+let supabaseClient = null;
+
+let supabaseUnavailableMessage =
+  'O Supabase ainda precisa ser configurado com a URL e a chave pública do projeto.';
+
+if (
+  SUPABASE_URL &&
+  SUPABASE_KEY &&
+  !SUPABASE_URL.startsWith('COLE_') &&
+  !SUPABASE_KEY.startsWith('COLE_')
+) {
+  try {
+    const url = new URL(SUPABASE_URL);
+
+    if (!['https:', 'http:'].includes(url.protocol)) {
+      throw new Error('Protocolo inválido na URL do Supabase.');
+    }
+
+    if (!window.supabase?.createClient) {
+      throw new Error('Biblioteca Supabase não carregada.');
+    }
+
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+  } catch (error) {
+    console.error('Falha ao inicializar Supabase:', error);
+
+    supabaseUnavailableMessage =
+      'Não foi possível iniciar o Supabase. Confira a configuração e sua conexão e recarregue a página.';
+  }
+}
+
+const stores = [
+    {
+      id: 1,
+      name: 'Sabor do Rio',
+      category: 'Brasileira',
+      rating: 4.8,
+      icon: '🍽️',
+      time: '20-30 min',
+      delivery: 'Entrega grátis',
+      products: [
+        {
+          name: 'Moqueca de Peixe',
+          description: 'Frango grelhado com arroz e farofa crocante.',
+          price: 39.9,
+          image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Feijoada Especial',
+          description: 'Receita tradicional com feijão preto e acompanhamentos.',
+          price: 34.5,
+          image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Coca-Cola 600ml',
+          description: 'Refrigerante gelado para acompanhar seu pedido.',
+          price: 7.5,
+          image: 'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=800&q=80'
+        }
+      ]
+    },
+    {
+      id: 2,
+      name: 'Pizzaria Verde',
+      category: 'Pizzas',
+      rating: 4.7,
+      icon: '🍕',
+      time: '25-35 min',
+      delivery: 'R$ 4,90',
+      products: [
+        {
+          name: 'Pizza Margherita',
+          description: 'Molho de tomate, mussarela e manjericão fresco.',
+          price: 42.0,
+          image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Pizza Pepperoni',
+          description: 'Pepperoni, queijo e molho especial da casa.',
+          price: 48.0,
+          image: 'https://images.unsplash.com/photo-1548365328-9f547fb9587c?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Calabresa com cebola',
+          description: 'Sabor marcante com cebola caramelizada.',
+          price: 45.5,
+          image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80'
+        }
+      ]
+    },
+    {
+      id: 3,
+      name: 'Bistro da Praça',
+      category: 'Lanches',
+      rating: 4.9,
+      icon: '🥪',
+      time: '15-25 min',
+      delivery: 'Entrega grátis',
+      products: [
+        {
+          name: 'X-Burger Clássico',
+          description: 'Hambúrguer, queijo, alface e molho da casa.',
+          price: 26.9,
+          image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Frango Crocante',
+          description: 'Pão brioche, frango empanado e maionese artesanal.',
+          price: 29.5,
+          image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Batata Frita',
+          description: 'Porção crocante com sal grosso e molho.',
+          price: 14.0,
+          image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80'
+        }
+      ]
+    },
+    {
+      id: 4,
+      name: 'Natura Bowl',
+      category: 'Saudável',
+      rating: 4.6,
+      icon: '🥗',
+      time: '20-30 min',
+      delivery: 'R$ 3,50',
+      products: [
+        {
+          name: 'Salada Tropical',
+          description: 'Mix de folhas, manga, abacaxi e castanha.',
+          price: 24.0,
+          image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Bowl de Frango',
+          description: 'Frango grelhado com quinoa e legumes assados.',
+          price: 31.0,
+          image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Suco Verde',
+          description: 'Espinafre, maçã e limão com gelo.',
+          price: 12.5,
+          image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80'
+        }
+      ]
+    },
+    {
+      id: 5,
+      name: 'Temaki & Cia',
+      category: 'Japonesa',
+      rating: 4.8,
+      icon: '🍣',
+      time: '30-40 min',
+      delivery: 'R$ 5,00',
+      products: [
+        {
+          name: 'Temaki Salmão',
+          description: 'Salmão fresco, arroz e pepino em formato de cone.',
+          price: 28.0,
+          image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Hot Roll',
+          description: 'Roll crocante com queijo e camarão.',
+          price: 32.5,
+          image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Sashimi Mix',
+          description: 'Seleção de peixes frescos com molho shoyu.',
+          price: 36.0,
+          image: 'https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=800&q=80'
+        }
+      ]
+    },
+    {
+      id: 6,
+      name: 'Doces da Maria',
+      category: 'Doces',
+      rating: 4.9,
+      icon: '🍰',
+      time: '10-20 min',
+      delivery: 'Entrega grátis',
+      products: [
+        {
+          name: 'Bolo de Chocolate',
+          description: 'Fatia cremosa com cobertura de chocolate.',
+          price: 18.5,
+          image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Brigadeiro Gourmet',
+          description: 'Chocolate ao leite com granulado crocante.',
+          price: 9.0,
+          image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          name: 'Cupcake de Morango',
+          description: 'Massa fofinha com cobertura de morango.',
+          price: 12.0,
+          image: 'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=800&q=80'
+        }
+      ]
+    }
+  ];
+  const SESSION_STORAGE_KEY = 'apiacasDeliverySession';
+  const COMMERCES_KEY = 'apiacasCommerces';
+  const PRODUCTS_KEY = 'apiacasProducts';
+  function readStorage(key, fallback = []) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key)) ?? fallback;
+      return Array.isArray(fallback) && !Array.isArray(value) ? fallback : value;
+    } catch { return fallback; }
+  }
+  function writeStorage(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+  function createId(prefix) { return `${prefix}-${window.crypto?.randomUUID ? window.crypto.randomUUID() : Date.now() + '-' + Math.random().toString(16).slice(2)}`; }
+  function normalizeEmail(value) { return String(value || '').trim().toLowerCase(); }
+  function onlyNumbers(value) { return String(value || '').replace(/\D/g, ''); }
+  function isValidCpf(value) {
+    const digits = onlyNumbers(value);
+    if (digits.length !== 11 || /^([0-9])\1{10}$/.test(digits)) return false;
+    let sum = 0;
+    for (let index = 0; index < 9; index += 1) sum += Number(digits[index]) * (10 - index);
+    let check = (sum * 10) % 11; if (check === 10) check = 0;
+    if (check !== Number(digits[9])) return false;
+    sum = 0;
+    for (let index = 0; index < 10; index += 1) sum += Number(digits[index]) * (11 - index);
+    check = (sum * 10) % 11; if (check === 10) check = 0;
+    return check === Number(digits[10]);
+  }
+  function isValidCnpj(value) {
+    const digits = onlyNumbers(value);
+    if (digits.length !== 14 || /^([0-9])\1{13}$/.test(digits)) return false;
+    const calculate = length => {
+    let sum = 0; let weight = length === 12 ? 5 : 6;
+      for (let index = 0; index < length; index += 1) {
+        sum += Number(digits[index]) * weight;
+        weight -= 1; if (weight === 1) weight = 9;
+      }
+      const remainder = sum % 11;
+      return remainder < 2 ? 0 : 11 - remainder;
+    };
+    return calculate(12) === Number(digits[12]) && calculate(13) === Number(digits[13]);
+  }
+  function parseMoneyValue(value) {
+    const text = String(value || '').trim().replace(/\s/g, '');
+    if (!text) return NaN;
+    const normalized = text.includes(',')
+      ? text.replace(/\./g, '').replace(',', '.')
+      : text;
+    return Number(normalized);
+  }
+  function normalizeBusinessTime(value) {
+    const text = String(value || '').trim();
+    const match = text.match(/^(\d{1,2})(?::(\d{1,2}))?$/);
+    if (!match) return '';
+    const hours = Number(match[1]);
+    const minutes = match[2] === undefined ? 0 : Number(match[2]);
+    if (hours > 23 || minutes > 59) return '';
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  }
+  function getCurrentSession() { return readCommerceStorage(SESSION_STORAGE_KEY, null); }
+  function cacheCommerce(commerce) {
+    const cached = {
+      id: String(commerce.id), owner_id: commerce.owner_id, name: commerce.name,
+      owner: commerce.responsible_name, document: commerce.document, phone: commerce.phone,
+      email: commerce.email, category: commerce.category,
+      address: { street: commerce.street, number: commerce.number, neighborhood: commerce.neighborhood, complement: commerce.complement },
+      businessHours: { opening: commerce.opening_time, closing: commerce.closing_time },
+      hours: [commerce.opening_time, commerce.closing_time].filter(Boolean).join(' - '),
+      isOpen: commerce.is_open, status: commerce.status, delivery: commerce.delivery_fee
+    };
+    const commerces = readStorage(COMMERCES_KEY, []);
+    writeStorage(COMMERCES_KEY, [...commerces.filter(item => String(item.id) !== cached.id), cached]);
+    return cached;
+  }
+  function getLoggedCommerce() {
+    return readStorage(COMMERCES_KEY, []).find(commerce => String(commerce.id) === String(getActiveCommerceId())) || null;
+  }
+  function getCurrentCommerceStore() { return stores.find(store => String(store.id) === String(getActiveCommerceId())) || null; }
+  async function updateLoggedCommerce(changes) {
+    if (!isCommerceSession() || (isMasterSession() && !isAdminPreview())) throw new Error('Selecione um comércio para alterar os dados.');
+    const commerces = readStorage(COMMERCES_KEY, []);
+    const index = commerces.findIndex(commerce => String(commerce.id) === String(currentCommerceId));
+    if (index < 0) throw new Error('Comércio não encontrado.');
+    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+    if (isAdminPreview()) return false;
+    if (sessionError || !session?.user || session.user.id !== currentUser?.id || String(commerces[index].owner_id) !== String(session.user.id)) throw new Error('Entre novamente na conta do comércio.');
+    const values = {};
+    if (changes.phone !== undefined) values.phone = onlyNumbers(changes.phone);
+    if (changes.email !== undefined) values.email = normalizeEmail(changes.email);
+    if (changes.isOpen !== undefined) values.is_open = Boolean(changes.isOpen);
+    if (changes.hours !== undefined) {
+      const parts = changes.hours.split(/\s*[-–]\s*/);
+      const opening = normalizeBusinessTime(parts[0]?.replace(/^(\d{2}:\d{2}):00$/, '$1'));
+      const closing = normalizeBusinessTime(parts[1]?.replace(/^(\d{2}:\d{2}):00$/, '$1'));
+      if (parts.length !== 2 || !opening || !closing) throw new Error('Informe o horário como 18:00 - 23:00.');
+      values.opening_time = opening;
+      values.closing_time = closing;
+    }
+    const { data, error } = await supabaseClient.from('commerces').update(values).eq('owner_id', currentUser.id).select('*').single();
+    if (error) { console.error('Falha ao atualizar comércio:', error.code); throw new Error('Não foi possível salvar os dados do comércio. Tente novamente.'); }
+    cacheCommerce(data);
+    loadCommerceProducts();
+    return true;
+  }
+  const PENDING_COMMERCE_KEY = 'apiacasPendingCommerceRegistration';
+  const pendingCommerceFields = ['name', 'responsible_name', 'responsible_cpf', 'company_cnpj', 'phone', 'email', 'category', 'street', 'number', 'neighborhood', 'complement', 'opening_time', 'closing_time'];
+  function savePendingCommerceRegistration(values) {
+    writeStorage(PENDING_COMMERCE_KEY, Object.fromEntries(pendingCommerceFields.map(key => [key, String(values[key] || '')])));
+  }
+  function getPendingCommerceRegistration() {
+    return readStorage(PENDING_COMMERCE_KEY, null);
+  }
+  function clearPendingCommerceRegistration() {
+    localStorage.removeItem(PENDING_COMMERCE_KEY);
+  }
+  async function fetchCommerceByOwnerId(userId) {
+    const { data, error } = await supabaseClient.from('commerces').select('*').eq('owner_id', userId).maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+  async function completePendingCommerceRegistration(user) {
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (error || !session?.user || session.user.id !== user?.id) throw new Error('Sessão indisponível.');
+    const owner = session.user;
+    const pending = getPendingCommerceRegistration();
+    const compatible = pending && (normalizeEmail(pending.email) === normalizeEmail(owner.email)
+      || (getOAuthSignup() && getOAuthRole() === 'commerce'));
+    let commerce = await fetchCommerceByOwnerId(owner.id);
+    if (!commerce && compatible) {
+      const values = Object.fromEntries(pendingCommerceFields.map(key => [key, String(pending[key] || '')]));
+      const result = await supabaseClient.from('commerces').insert({ ...values, document: values.company_cnpj, owner_id: owner.id, is_open: false, status: 'pendente_aprovacao', registration_status: 'nao_consultada', delivery_fee: 0 }).select('*').single();
+      if (result.error) {
+        // Another tab may have completed the same registration.
+        if (result.error.code === '23505') commerce = await fetchCommerceByOwnerId(owner.id);
+        if (!commerce) throw result.error;
+      } else commerce = result.data;
+    }
+    if (commerce) {
+      cacheCommerce(commerce);
+      if (compatible) clearPendingCommerceRegistration();
+    }
+    return commerce;
+  }
+  function persistCommerceProducts(commerceId, updated) {
+    if (!isCommerceSession() || (!isMasterSession() && String(commerceId) !== String(currentCommerceId))) throw new Error('Acesso negado.');
+    const products = readStorage(PRODUCTS_KEY, []);
+    const own = products.filter(product => String(product.commerceId) === String(commerceId));
+    if (updated.some(product => product.id && !own.some(item => String(item.id) === String(product.id)))) throw new Error('Produto não encontrado.');
+    const saved = updated.map(product => ({ ...product, id: product.id || createId('product'), commerceId, available: product.available !== false, updatedAt: new Date().toISOString() }));
+    writeStorage(PRODUCTS_KEY, [...products.filter(product => String(product.commerceId) !== String(commerceId)), ...saved]);
+    loadCommerceProducts();
+  }
+  async function registerCommerce(event) {
+    event.preventDefault();
+    if (!supabaseClient) { document.getElementById('commerceRegisterError').textContent = supabaseUnavailableMessage; return; }
+    if (authRequestPending) return;
+    const form = document.getElementById('commerceRegisterForm');
+    const error = document.getElementById('commerceRegisterError');
+    const value = name => document.getElementById('registerCommerce' + name).value.trim();
+    const password = document.getElementById('registerCommercePassword').value;
+    const email = normalizeEmail(value('Email'));
+    if (!form.reportValidity()) return;
+    if (password.length < 6 || password !== document.getElementById('registerCommercePasswordConfirm').value) { error.textContent = 'As senhas devem ser iguais e ter pelo menos 6 caracteres.'; return; }
+    const responsibleCpf = value('ResponsibleCpf');
+    const companyCnpj = value('CompanyCnpj');
+    if (['Name','Owner','Category','Street','Number','Neighborhood'].some(name => !value(name)) || onlyNumbers(value('Phone')).length < 10) { error.textContent = 'Preencha os dados e telefone corretamente.'; return; }
+    if (!isValidCpf(responsibleCpf)) { error.textContent = 'CPF do responsável inválido.'; return; }
+    if (!isValidCnpj(companyCnpj)) { error.textContent = 'CNPJ da empresa inválido.'; return; }
+    const opening = normalizeBusinessTime(value('Opening'));
+    const closing = normalizeBusinessTime(value('Closing'));
+    if (!opening || !closing) { error.textContent = 'Informe os horários no formato 24 horas, como 18 ou 18:00.'; return; }
+    authRequestPending = true;
+    const pending = {
+      name: value('Name'), responsible_name: value('Owner'), responsible_cpf: onlyNumbers(responsibleCpf), company_cnpj: onlyNumbers(companyCnpj),
+      phone: onlyNumbers(value('Phone')), email, category: value('Category'), street: value('Street'), number: value('Number'),
+      neighborhood: value('Neighborhood'), complement: value('Complement'), opening_time: opening, closing_time: closing,
+    };
+    if (form.dataset.submitting === 'true') return;
+    form.dataset.submitting = 'true';
+    error.textContent = 'Criando cadastro...';
+    try {
+      savePendingCommerceRegistration(pending);
+      const { data, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
+      if (signUpError) {
+        console.error('Falha no cadastro Auth:', signUpError.code);
+        error.textContent = 'Não foi possível criar a conta. Se já possui uma conta, entre para concluir o cadastro do comércio.';
+        return;
+      }
+      if (!data.user) { error.textContent = 'Não foi possível iniciar o cadastro. Tente novamente.'; return; }
+      document.getElementById('registerCommercePassword').value = '';
+      document.getElementById('registerCommercePasswordConfirm').value = '';
+      if (!data.session) {
+        error.textContent = 'Confira o e-mail de confirmação enviado. Depois de confirmar, entre no app para concluir o cadastro do comércio neste navegador.';
+        return;
+      }
+      currentUser = data.session.user;
+      const commerce = await completePendingCommerceRegistration(currentUser);
+      if (!commerce) throw new Error('Cadastro pendente indisponível.');
+      currentCommerceId = String(commerce.id);
+      form.reset(); error.textContent = 'Cadastro enviado para análise administrativa.';
+      showCommerceLogin();
+      showStatus('Cadastro enviado para análise administrativa.');
+    } catch (failure) {
+      console.error('Falha ao concluir cadastro do comércio:', failure.code || failure.name);
+      error.textContent = failure.code === '23505' ? 'Este CNPJ já está cadastrado.' : 'Não foi possível concluir o cadastro. Seus dados pendentes serão usados ao entrar novamente.';
+    } finally { delete form.dataset.submitting; authRequestPending = false; }
+  }
+  const categories = ['Todos', 'Brasileira', 'Pizzas', 'Lanches', 'Saudável', 'Japonesa', 'Doces'];
+  const authScreen = document.getElementById('authScreen');
+  const profileSelection = document.getElementById('profileSelection');
+  const clientLoginForm = document.getElementById('clientLoginForm');
+  const clientRegisterForm = document.getElementById('clientRegisterForm');
+  const commerceLoginForm = document.getElementById('commerceLoginForm');
+  const commerceRegisterForm = document.getElementById('commerceRegisterForm');
+  function ensureCommerceIdentityFields() {
+    const cpfInput = document.getElementById('registerCommerceDocument');
+    if (!cpfInput) return;
+    cpfInput.id = 'registerCommerceResponsibleCpf';
+    cpfInput.inputMode = 'numeric';
+    cpfInput.maxLength = 14;
+    cpfInput.closest('label').childNodes[0].textContent = 'CPF do responsável';
+    const cnpjLabel = document.createElement('label');
+    cnpjLabel.className = 'commerce-field';
+    cnpjLabel.textContent = 'CNPJ da empresa';
+    const cnpjInput = document.createElement('input');
+    cnpjInput.id = 'registerCommerceCompanyCnpj';
+    cnpjInput.type = 'text';
+    cnpjInput.inputMode = 'numeric';
+    cnpjInput.maxLength = 18;
+    cnpjInput.required = true;
+    cnpjLabel.appendChild(cnpjInput);
+    cpfInput.closest('label').after(cnpjLabel);
+  }
+  ensureCommerceIdentityFields();
+  const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+  const updatePasswordForm = document.getElementById('updatePasswordForm');
+  const rememberUserModal = document.getElementById('rememberUserModal');
+  const rememberUserYes = document.getElementById('rememberUserYes');
+  const rememberUserNo = document.getElementById('rememberUserNo');
+  const clientEmailInput = document.getElementById('clientEmail');
+  const clientPasswordInput = document.getElementById('clientPassword');
+  const commerceEmailInput = document.getElementById('commerceEmail');
+  const commercePasswordInput = document.getElementById('commercePassword');
+  const clientLoginError = document.getElementById('clientLoginError');
+  const clientRegisterError = document.getElementById('clientRegisterError');
+  const commerceLoginError = document.getElementById('commerceLoginError');
+  const clientApp = document.getElementById('clientApp');
+  const categoryList = document.getElementById('categoryList');
+  const storeList = document.getElementById('storeList');
+  const resultsCount = document.getElementById('resultsCount');
+  const searchInput = document.getElementById('searchInput');
+  const supportCarousel = document.getElementById('supportCarousel');
+  const promotionsCard = document.getElementById('promotionsCard');
+  const statusMessage = document.getElementById('statusMessage');
+  const menuPanel = document.getElementById('menuPanel');
+  const closeMenuButton = document.getElementById('closeMenu');
+  const menuStoreCategory = document.getElementById('menuStoreCategory');
+  const menuStoreName = document.getElementById('menuStoreName');
+  const menuStoreRating = document.getElementById('menuStoreRating');
+  const menuProducts = document.getElementById('menuProducts');
+  const cartButton = document.getElementById('cartButton');
+  const cartCount = document.getElementById('cartCount');
+  const cartTotalPreview = document.getElementById('cartTotalPreview');
+  const cartPanel = document.getElementById('cartPanel');
+  const closeCartButton = document.getElementById('closeCart');
+  const cartItems = document.getElementById('cartItems');
+  const subtotalValue = document.getElementById('subtotalValue');
+  const totalValue = document.getElementById('totalValue');
+  const finishOrderButton = document.getElementById('finishOrderButton');
+  const checkoutPanel = document.getElementById('checkoutPanel');
+  const closeCheckoutButton = document.getElementById('closeCheckout');
+  const backToCartButton = document.getElementById('backToCartButton');
+  const checkoutForm = document.getElementById('checkoutForm');
+  const checkoutContent = document.getElementById('checkoutContent');
+  const checkoutSuccess = document.getElementById('checkoutSuccess');
+  const checkoutSummaryList = document.getElementById('checkoutSummaryList');
+  const checkoutSubtotal = document.getElementById('checkoutSubtotal');
+  const checkoutDeliveryFee = document.getElementById('checkoutDeliveryFee');
+  const checkoutTotal = document.getElementById('checkoutTotal');
+  const checkoutPaymentSummary = document.getElementById('checkoutPaymentSummary');
+  const cashChangeGroup = document.getElementById('cashChangeGroup');
+  const cashAmountInput = document.getElementById('cashAmount');
+  const cashChangeMessage = document.getElementById('cashChangeMessage');
+  const confirmOrderButton = checkoutForm.querySelector('button[type="submit"]');
+  const successOrderNumber = document.getElementById('successOrderNumber');
+  const successDeliveryStatus = document.getElementById('successDeliveryStatus');
+  const successSummary = document.getElementById('successSummary');
+  const backHomeButton = document.getElementById('backHomeButton');
+  const DELIVERY_FEE = 5;
+  const ORDER_SEQUENCE_KEY = 'apiacasDeliveryOrderSequence';
+  const ORDERS_STORAGE_KEY = 'apiacasDeliveryOrders';
+  const STORE_SETTINGS_KEY = 'apiacasDeliveryStoreSettings';
+  const PRODUCT_AVAILABILITY_KEY = 'apiacasDeliveryProductAvailability';
+  const PAYMENT_LABELS = {
+    pix: 'PIX',
+    cash: 'Dinheiro',
+    card: 'Cartão na entrega', credit: 'Crédito na entrega', debit: 'Débito na entrega'
+  };
+  let selectedCategory = 'Todos';
+  const cart = [];
+  let isSubmittingOrder = false;
+  let activeCustomerOrderNumber = null;
+  let customerOrderRefreshTimer = null;
+  let currentProfile = null;
+  let currentUser = null;
+  let currentCommerceId = null;
+  let adminPreviewMode = null;
+  let adminPreviewCommerceId = null;
+  let adminSession = false;
+  let authRequestPending = false;
+  let clientOrdersTimer = null;
+  let masterMode = false;
+  document.querySelectorAll('input[type="email"]').forEach(input => { input.maxLength = 254; input.autocomplete = 'email'; });
+  function isAdminPreview() { return currentUser && currentProfile === 'admin' && adminPreviewMode; }
+  function isCustomerView() { return currentProfile === 'client' || (isAdminPreview() && adminPreviewMode === 'customer'); }
+  function isMasterSession() { return currentProfile === 'master' || masterMode || (isAdminPreview() && adminPreviewMode === 'commerce'); }
+  function isCommerceSession() { return currentProfile === 'commerce' || isMasterSession(); }
+  function getActiveCommerceId() { return adminPreviewMode === 'commerce' ? adminPreviewCommerceId : currentCommerceId; }
+  function updateModeSwitcherVisibility() {
+    const modeSwitcher = document.getElementById('modeSwitcher');
+    const isAuthenticatedAdmin = Boolean(currentUser && adminSession);
+    modeSwitcher.classList.toggle('hidden', !isAuthenticatedAdmin);
+    if (!isAuthenticatedAdmin) {
+      modeSwitcher.classList.remove('open');
+      document.getElementById('modeSwitcherButton').setAttribute('aria-expanded', 'false');
+    }
+  }
+  function renderCategories() {
+    categoryList.innerHTML = categories
+      .map(
+        (category) => `
+          <button
+            type="button"
+            class="category-item ${category === selectedCategory ? 'active' : ''}"
+            data-category="${category}"
+          >
+            ${category}
+          </button>
+        `
+      )
+      .join('');
+    document.querySelectorAll('.category-item').forEach((button) => {
+      button.addEventListener('click', () => {
+        selectedCategory = button.dataset.category;
+        renderCategories();
+        renderStores();
+      });
+    });
+  }
+  function getFilteredStores() {
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    return stores.filter((store) => {
+      if (store.status !== 'active') return false;
+      const matchesCategory = selectedCategory === 'Todos' || store.category === selectedCategory;
+      const matchesSearch =
+        store.name.toLowerCase().includes(searchTerm) ||
+        store.category.toLowerCase().includes(searchTerm);
+      return matchesCategory && matchesSearch;
+    });
+  }
+  function showStatus(message) {
+    statusMessage.textContent = message;
+    statusMessage.classList.add('show');
+    setTimeout(() => {
+      statusMessage.classList.remove('show');
+    }, 1800);
+  }
+  function hideAuthViews() {
+    document.getElementById('generalAdminLoginForm').classList.add('hidden');
+    document.getElementById('commerceRegisterForm').classList.add('hidden');
+    forgotPasswordForm.classList.add('hidden');
+    updatePasswordForm.classList.add('hidden');
+    profileSelection.classList.add('hidden');
+    clientLoginForm.classList.add('hidden');
+    clientRegisterForm.classList.add('hidden');
+    commerceLoginForm.classList.add('hidden');
+  }
+  function showProfileSelection() {
+    hideAuthViews();
+    profileSelection.classList.remove('hidden');
+    clientLoginError.textContent = '';
+    clientRegisterError.textContent = '';
+    commerceLoginError.textContent = '';
+  }
+  function showClientLogin() {
+    hideAuthViews();
+    clientLoginForm.classList.remove('hidden');
+    clientLoginError.textContent = '';
+    loadRememberedEmail(clientEmailInput, clientPasswordInput, clientLoginForm);
+    clientEmailInput.focus();
+  }
+  function showClientRegister() {
+    hideAuthViews();
+    clientRegisterForm.classList.remove('hidden');
+    clientRegisterError.textContent = '';
+    document.getElementById('registerClientName').focus();
+  }
+  function showCommerceLogin() {
+    hideAuthViews();
+    commerceLoginForm.classList.remove('hidden');
+    commerceLoginError.textContent = '';
+    loadRememberedEmail(commerceEmailInput, commercePasswordInput, commerceLoginForm);
+    commerceEmailInput.focus();
+  }
+  function loadRememberedEmail(emailInput, passwordInput, form) {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const useAnotherAccount = form.querySelector('[data-use-another-account]');
+    if (savedEmail) {
+      emailInput.value = savedEmail;
+      emailInput.readOnly = true;
+      passwordInput.value = '';
+      useAnotherAccount.classList.remove('hidden');
+    } else {
+      emailInput.readOnly = false;
+      useAnotherAccount.classList.add('hidden');
+    }
+  }
+  function useAnotherAccount(emailInput, passwordInput, form) {
+    localStorage.removeItem('rememberedEmail');
+    emailInput.readOnly = false;
+    emailInput.value = '';
+    passwordInput.value = '';
+    form.querySelector('[data-use-another-account]').classList.add('hidden');
+    emailInput.focus();
+  }
+  function askRememberUser(email) {
+    if (localStorage.getItem('rememberedEmail')) return Promise.resolve();
+    return new Promise(resolve => {
+      const close = () => {
+        rememberUserModal.classList.add('hidden');
+        rememberUserModal.setAttribute('aria-hidden', 'true');
+        rememberUserYes.removeEventListener('click', remember); rememberUserNo.removeEventListener('click', close);
+        resolve();
+      };
+      const remember = () => { localStorage.setItem('rememberedEmail', email.trim()); close(); };
+      rememberUserYes.addEventListener('click', remember);
+      rememberUserNo.addEventListener('click', close);
+      rememberUserModal.classList.remove('hidden');
+      rememberUserModal.setAttribute('aria-hidden', 'false');
+      rememberUserYes.focus();
+    });
+  }
+  function showForgotPassword(emailInputId) {
+    hideAuthViews();
+    forgotPasswordForm.classList.remove('hidden');
+    document.getElementById('forgotPasswordEmail').value = document.getElementById(emailInputId).value;
+    document.getElementById('forgotPasswordMessage').textContent = '';
+    document.getElementById('forgotPasswordEmail').focus();
+  }
+  function isPasswordRecoveryRedirect() {
+    return new URLSearchParams(window.location.hash.slice(1)).get('type') === 'recovery'
+      || new URLSearchParams(window.location.search).get('type') === 'recovery';
+  }
+  function showResetPasswordScreen() {
+    authScreen.classList.remove('hidden');
+    [clientApp, adminPanel, generalPanel, menuPanel, cartPanel, checkoutPanel, cartButton].forEach(panel => panel.classList.add('hidden'));
+    hideAuthViews();
+    updatePasswordForm.classList.remove('hidden');
+    document.getElementById('updatePasswordMessage').textContent = '';
+    document.getElementById('newPassword').focus();
+  }
+  function saveSession(profile, commerceId = null, keepMasterMode = false) {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+      loggedIn: true, profile, commerceId, masterMode: keepMasterMode
+    }));
+  }
+  function showClientApp() {
+    if (!isAdminPreview()) currentProfile = 'client';
+    updateModeSwitcherVisibility();
+    document.querySelectorAll('[data-mode-option]').forEach(button => {
+      button.classList.toggle('active', button.dataset.modeOption === 'client');
+      button.disabled = button.dataset.modeOption === 'admin' && currentProfile !== 'admin';
+    });
+    closeClientOrders();
+    authScreen.classList.add('hidden');
+    clientApp.classList.remove('hidden');
+    cartButton.classList.remove('hidden');
+    adminPanel.classList.add('hidden');
+    adminPanel.setAttribute('aria-hidden', 'true');
+    openAdminButton.classList.add('hidden');
+    openAdminButton.setAttribute('aria-expanded', 'false');
+  }
+  function showCommercePanel(profile = 'commerce') {
+    if (!isAdminPreview()) currentProfile = profile;
+    updateModeSwitcherVisibility();
+    document.querySelectorAll('[data-mode-option]').forEach(button => {
+      button.classList.toggle('active', button.dataset.modeOption === 'commerce');
+      button.disabled = button.dataset.modeOption === 'admin' && currentProfile !== 'admin';
+    });
+    resetProductEditor();
+    closeClientOrders();
+    authScreen.classList.add('hidden');
+    clientApp.classList.add('hidden');
+    cartButton.classList.add('hidden');
+    openAdminButton.classList.remove('hidden');
+    openAdminPanel();
+  }
+  function switchMasterToClient() {
+    if (!isCommerceSession()) return;
+    currentProfile = 'client';
+    masterMode = true;
+    saveSession('client', currentCommerceId, true);
+    showClientApp();
+  }
+  function switchMasterToCommerce() {
+    if (!isMasterSession()) return;
+    currentProfile = 'master';
+    saveSession('master', currentCommerceId, true);
+    showCommercePanel('master');
+  }
+  function getOAuthRole() {
+    const role = new URLSearchParams(window.location.search).get('oauth_role');
+    return role === 'commerce' ? 'commerce' : role === 'client' ? 'client' : '';
+  }
+  function getOAuthSignup() {
+    return new URLSearchParams(window.location.search).get('oauth_signup') === '1';
+  }
+  async function continueWithGoogle(role, isSignup = false) {
+    const message = role === 'commerce' ? commerceLoginError : clientLoginError;
+    const registrationMessage = role === 'commerce' ? document.getElementById('commerceRegisterError') : clientRegisterError;
+    if (!supabaseClient) { message.textContent = supabaseUnavailableMessage; return; }
+    if (authRequestPending) return;
+    if (isSignup && role === 'commerce') {
+      const value = name => document.getElementById('registerCommerce' + name).value.trim();
+      const required = ['Name', 'Owner', 'ResponsibleCpf', 'CompanyCnpj', 'Phone', 'Email', 'Category', 'Street', 'Number', 'Neighborhood', 'Opening', 'Closing'];
+      if (required.some(name => !value(name))) { registrationMessage.textContent = 'Preencha os dados do comércio antes de continuar.'; return; }
+      const pending = {
+        name: value('Name'), responsible_name: value('Owner'), responsible_cpf: onlyNumbers(value('ResponsibleCpf')), company_cnpj: onlyNumbers(value('CompanyCnpj')),
+        phone: onlyNumbers(value('Phone')), email: normalizeEmail(value('Email')), category: value('Category'),
+        street: value('Street'), number: value('Number'), neighborhood: value('Neighborhood'),
+        complement: value('Complement'), opening_time: normalizeBusinessTime(value('Opening')), closing_time: normalizeBusinessTime(value('Closing'))
+      };
+      if (!isValidCpf(pending.responsible_cpf)) { registrationMessage.textContent = 'CPF do responsável inválido.'; return; }
+      if (!isValidCnpj(pending.company_cnpj)) { registrationMessage.textContent = 'CNPJ da empresa inválido.'; return; }
+      if (!pending.opening_time || !pending.closing_time) { registrationMessage.textContent = 'Informe horários válidos.'; return; }
+      savePendingCommerceRegistration(pending);
+    }
+    authRequestPending = true;
+    (isSignup ? registrationMessage : message).textContent = 'Abrindo Google...';
+    try {
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/?oauth_role=${role}${isSignup ? '&oauth_signup=1' : ''}` }
+      });
+      if (error) (isSignup ? registrationMessage : message).textContent = 'Não foi possível iniciar o login com Google.';
+    } catch (error) {
+      console.error('Falha no login Google:', error);
+      (isSignup ? registrationMessage : message).textContent = 'Não foi possível iniciar o login com Google.';
+    } finally {
+      authRequestPending = false;
+    }
+  }
+  async function ensureGoogleProfileType(user, role) {
+    const { data, error } = await supabaseClient.from('profiles').select('profile_type').eq('id', user.id).maybeSingle();
+    if (error) throw error;
+    if (data?.profile_type) return data.profile_type;
+    const profileType = role === 'commerce' ? 'comercio' : 'cliente';
+    const { error: updateError } = await supabaseClient.auth.updateUser({ data: { profile_type: profileType } });
+    if (updateError) throw updateError;
+    return profileType;
+  }
+  async function registerClient(event) {
+    event.preventDefault();
+    if (!supabaseClient) { clientRegisterError.textContent = supabaseUnavailableMessage; return; }
+    if (authRequestPending) return;
+    if (!clientRegisterForm.reportValidity()) return;
+    const name = document.getElementById('registerClientName').value.trim();
+    const phone = document.getElementById('registerClientPhone').value.trim();
+    const email = normalizeEmail(document.getElementById('registerClientEmail').value);
+    const password = document.getElementById('registerClientPassword').value;
+    const confirmation = document.getElementById('registerClientPasswordConfirm').value;
+    if (password !== confirmation) { clientRegisterError.textContent = 'As senhas devem ser iguais.'; return; }
+    authRequestPending = true;
+    try {
+      const { data, error } = await supabaseClient.auth.signUp({ email, password, options: { data: { name, phone } } });
+      if (error) { clientRegisterError.textContent = error.message; return; }
+      if (!data.session) { clientRegisterError.textContent = 'Cadastro criado. Confirme seu e-mail para entrar.'; return; }
+      currentUser = data.user;
+      clientRegisterForm.reset();
+      showClientApp();
+    } finally { authRequestPending = false; }
+  }
+  async function loginClient() {
+    if (!supabaseClient) { clientLoginError.textContent = supabaseUnavailableMessage; return false; }
+    if (authRequestPending) return false;
+    const email = clientEmailInput.value.trim().toLowerCase();
+    const password = clientPasswordInput.value;
+    authRequestPending = true;
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error || !data.user) { clientLoginError.textContent = error?.message || 'E-mail ou senha inválidos.'; return false; }
+      await askRememberUser(email);
+      masterMode = false;
+      currentUser = data.user;
+      if (await routeGeneralAdmin()) return true;
+      showClientApp();
+      return true;
+    } finally { authRequestPending = false; }
+  }
+  async function loginCommerce() {
+    if (!supabaseClient) { commerceLoginError.textContent = supabaseUnavailableMessage; return false; }
+    if (authRequestPending) return false;
+    authRequestPending = true;
+    try {
+    const email = normalizeEmail(commerceEmailInput.value);
+    const password = String(commercePasswordInput.value);
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error || !data.user) {
+      console.error('Falha no login do comércio:', error?.code);
+      commerceLoginError.textContent = error?.code === 'email_not_confirmed' ? 'Confirme seu e-mail antes de entrar.' : 'Não foi possível entrar. Confira seu e-mail e senha.';
+      return false;
+    }
+    await askRememberUser(email);
+    currentUser = data.user;
+    let commerce;
+    if (await routeGeneralAdmin()) return true;
+    try { commerce = await completePendingCommerceRegistration(currentUser); }
+    catch (failure) {
+      console.error('Falha ao carregar comércio:', failure.code || failure.name);
+      commerceLoginError.textContent = 'Não foi possível carregar ou concluir o cadastro do comércio. Tente entrar novamente.';
+      return false;
+    }
+    if (!commerce) { currentCommerceId = null; commerceLoginError.textContent = 'Sua conta foi autenticada, mas o cadastro do comércio ainda não foi concluído.'; return false; }
+    if (commerce.status !== 'active') { commerceLoginError.textContent = 'Cadastro enviado para análise administrativa.'; return false; }
+    const cachedCommerce = cacheCommerce(commerce);
+    currentCommerceId = cachedCommerce.id;
+    masterMode = false;
+    currentUser = data.user;
+    showCommercePanel();
+    return true;
+    } catch (failure) {
+      console.error('Falha de conexão no login:', failure.code || failure.name);
+      commerceLoginError.textContent = 'Não foi possível conectar. Tente novamente.';
+      return false;
+    } finally { authRequestPending = false; }
+  }
+  async function logout() {
+    try {
+      const { error } = supabaseClient ? await supabaseClient.auth.signOut() : { error: null };
+      if (error) showStatus('Não foi possível encerrar a sessão no servidor.');
+    } catch (error) {
+      console.error('Falha ao encerrar sessão:', error);
+    }
+    clearGeneralAdmin();
+    currentProfile = null;
+    currentUser = null;
+    adminSession = false;
+    cart.length = 0;
+    renderCart();
+    checkoutForm.reset();
+    isSubmittingOrder = false;
+    currentCommerceId = null;
+    masterMode = false;
+    adminPreviewMode = null;
+    adminPreviewCommerceId = null;
+    localStorage.removeItem(ADMIN_PREVIEW_KEY);
+    updateModeSwitcherVisibility();
+    document.getElementById('modeSwitcher').classList.add('hidden');
+    closeClientOrders();
+    [menuPanel, cartPanel, checkoutPanel].forEach(panel => { panel.classList.add('hidden'); panel.setAttribute('aria-hidden', 'true'); });
+    clientPasswordInput.value = ''; commercePasswordInput.value = '';
+    closeAdminOrderDetails();
+    cancelOrderModal.classList.add('hidden');
+    cancelOrderModal.setAttribute('aria-hidden', 'true');
+    openAdminButton.classList.add('hidden');
+    stopCustomerOrderTracking();
+    closeAdminMenu();
+    if (adminRefreshTimer !== null) {
+      window.clearInterval(adminRefreshTimer);
+      adminRefreshTimer = null;
+    }
+    adminPanel.classList.add('hidden');
+    adminPanel.setAttribute('aria-hidden', 'true');
+    cartButton.classList.add('hidden');
+    openAdminButton.setAttribute('aria-expanded', 'false');
+    clientApp.classList.add('hidden');
+    authScreen.classList.remove('hidden');
+    showProfileSelection();
+  }
+  async function restoreSession() {
+    if (!supabaseClient) { showProfileSelection(); return; }
+    const oauthRole = getOAuthRole();
+    const oauthSignup = getOAuthSignup();
+    const oauthError = new URLSearchParams(window.location.search).get('error_description');
+    try {
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (error || !session?.user) {
+      if (oauthError && oauthSignup) {
+        hideAuthViews();
+        const form = oauthRole === 'commerce' ? document.getElementById('commerceRegisterForm') : clientRegisterForm;
+        form.classList.remove('hidden');
+        (oauthRole === 'commerce' ? document.getElementById('commerceRegisterError') : clientRegisterError).textContent = 'Cadastro Google cancelado ou não autorizado.';
+      } else if (oauthError) {
+        if (oauthRole === 'commerce') {
+          showCommerceLogin();
+          commerceLoginError.textContent = 'Login Google cancelado ou não autorizado.';
+        } else {
+          showClientLogin();
+          clientLoginError.textContent = 'Login Google cancelado ou não autorizado.';
+        }
+      } else showProfileSelection();
+      return;
+    }
+    currentUser = session.user;
+    if (await routeGeneralAdmin()) return;
+    let profileType = '';
+    if (oauthRole) {
+      try { profileType = await ensureGoogleProfileType(session.user, oauthRole || 'client'); }
+      catch (failure) {
+        console.error('Falha ao salvar tipo do perfil Google:', failure.code || failure.name);
+        showStatus('Não foi possível concluir o cadastro Google.');
+        return;
+      }
+    }
+    if (profileType === 'admin') {
+      showProfileSelection();
+      showStatus('Contas Admin devem usar o acesso administrativo.');
+      return;
+    }
+    if ((profileType === 'client' || profileType === 'cliente') && oauthRole !== 'commerce') {
+      showClientApp();
+      return;
+    }
+    let commerce;
+    try { commerce = await completePendingCommerceRegistration(session.user); }
+    catch (failure) {
+      console.error('Falha ao restaurar comércio:', failure.code || failure.name);
+      showCommerceLogin();
+      commerceLoginError.textContent = failure.code === '23505' ? 'Este CNPJ já está cadastrado.' : 'Não foi possível carregar ou concluir o cadastro do comércio. Tente novamente.';
+      return;
+    }
+    if (commerce && commerce.status === 'active') {
+      const cachedCommerce = cacheCommerce(commerce);
+      currentCommerceId = cachedCommerce.id;
+      showCommercePanel();
+    } else if (commerce) {
+      showCommerceLogin();
+      commerceLoginError.textContent = 'Cadastro enviado para análise administrativa.';
+    } else if (profileType === 'commerce' || profileType === 'comercio' || oauthRole === 'commerce') {
+      hideAuthViews();
+      document.getElementById('commerceRegisterForm').classList.remove('hidden');
+      document.getElementById('commerceRegisterError').textContent = 'Conclua os dados do comércio para finalizar o cadastro Google.';
+    } else {
+      showClientApp();
+    }
+    } catch (failure) {
+      console.error('Falha ao restaurar sessão:', failure.code || failure.name);
+      showProfileSelection();
+      showStatus('Não foi possível restaurar sua sessão. Tente entrar novamente.');
+    }
+  }
+  function openCart() {
+    cartButton.classList.add('hidden');
+    cartPanel.classList.remove('hidden');
+    cartPanel.setAttribute('aria-hidden', 'false');
+  }
+  function closeCart() {
+    cartButton.classList.remove('hidden');
+    cartPanel.classList.add('hidden');
+    cartPanel.setAttribute('aria-hidden', 'true');
+  }
+  function updateCartButton() {
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    cartCount.textContent = totalItems;
+
+    if (cartTotalPreview) {
+      cartTotalPreview.textContent =
+        totalItems > 0 ? formatCurrency(subtotal) : '';
+    }
+  }
+  function updateCartSummary() {
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const total = subtotal;
+    subtotalValue.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+    totalValue.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    finishOrderButton.disabled = cart.length === 0;
+  }
+  function formatCurrency(value) {
+    return `R$ ${value.toFixed(2).replace('.', ',')}`;
+  }
+  function parseDeliveryFee(deliveryLabel) {
+    if (typeof deliveryLabel === 'number') return Number.isFinite(deliveryLabel) ? Math.max(0, deliveryLabel) : 0;
+    if (!deliveryLabel || deliveryLabel.toLowerCase().includes('grátis')) {
+      return 0;
+    }
+    const numericValue = Number.parseFloat(
+      deliveryLabel.replace('R$', '').replace('.', '').replace(',', '.').trim()
+    );
+    return Number.isFinite(numericValue) ? numericValue : 0;
+  }
+  function getCartDeliveryFee() {
+    if (cart.length === 0) {
+      return 0;
+    }
+    return cart[0].deliveryFee === undefined
+      ? DELIVERY_FEE
+      : Number(cart[0].deliveryFee) || 0;
+  }
+  function getNextOrderNumber() {
+    const lastSequence = Number.parseInt(localStorage.getItem(ORDER_SEQUENCE_KEY) || '0', 10);
+    const nextSequence = Number.isFinite(lastSequence) ? lastSequence + 1 : 1;
+    localStorage.setItem(ORDER_SEQUENCE_KEY, String(nextSequence));
+    return `APC-${String(nextSequence).padStart(4, '0')}`;
+  }
+  function getSavedOrders() {
+    try {
+      const savedOrders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+      return Array.isArray(savedOrders) ? savedOrders : [];
+    } catch (error) {
+      return [];
+    }
+  }
+  function getStoreSettings() {
+    try {
+      const settings = JSON.parse(localStorage.getItem(STORE_SETTINGS_KEY) || '{}');
+      return settings && typeof settings === 'object' ? settings : {};
+    } catch (error) {
+      return {};
+    }
+  }
+  function isStoreOpen(storeId = getActiveCommerceId() || cart[0]?.storeId) {
+    const commerce = readStorage(COMMERCES_KEY, []).find(item => String(item.id) === String(storeId));
+    return Boolean(commerce && commerce.status === 'active' && commerce.isOpen);
+  }
+  async function saveStoreOpenState(isOpen) {
+    if (!isCommerceSession()) return;
+    if (isAdminPreview()) {
+      const commerces = readStorage(COMMERCES_KEY, []);
+      const commerce = commerces.find(item => String(item.id) === String(getActiveCommerceId()));
+      if (commerce) { commerce.isOpen = Boolean(isOpen); writeStorage(COMMERCES_KEY, commerces); loadCommerceProducts(); }
+      return;
+    }
+    await updateLoggedCommerce({ isOpen: Boolean(isOpen) });
+    localStorage.setItem(STORE_SETTINGS_KEY, JSON.stringify({
+      ...getStoreSettings(),
+      isOpen
+    }));
+  }
+  function getProductAvailability() {
+    try {
+      const availability = JSON.parse(localStorage.getItem(PRODUCT_AVAILABILITY_KEY) || '{}');
+      return availability && typeof availability === 'object' ? availability : {};
+    } catch (error) {
+      return {};
+    }
+  }
+  function getProductKey(storeId, productName) {
+    return `${storeId}-${productName}`;
+  }
+  function isProductAvailable(storeId, productName) {
+    const product = readStorage(PRODUCTS_KEY, []).find(item => String(item.commerceId) === String(storeId) && item.name === productName);
+    return Boolean(product && product.available !== false);
+  }
+  function saveProductAvailability(storeId, productName, available) {
+    if (!isCommerceSession() || (!isMasterSession() && String(storeId) !== String(currentCommerceId))) return;
+    const products = readStorage(PRODUCTS_KEY, []);
+    const product = products.find(item => String(item.commerceId) === String(storeId) && item.name === productName);
+    if (!product) return;
+    product.available = Boolean(available);
+    writeStorage(PRODUCTS_KEY, products);
+    loadCommerceProducts();
+    const availability = getProductAvailability();
+    availability[getProductKey(storeId, productName)] = available;
+    localStorage.setItem(PRODUCT_AVAILABILITY_KEY, JSON.stringify(availability));
+  }
+  function saveOrder(order) {
+    const savedOrders = getSavedOrders();
+    savedOrders.push(order);
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(savedOrders));
+  }
+  function buildOrderFromCheckout(formData, orderItems, paymentMethod, cashAmount, subtotal, total) {
+    const orderNumber = getNextOrderNumber();
+    return {
+      commerceId: orderItems[0]?.storeId,
+      customerId: currentUser?.id,
+      customerEmail: normalizeEmail(currentUser?.email),
+      numero: orderNumber,
+      data: new Date().toISOString(),
+      status: 'Novo',
+      visualizado: false,
+      cliente: {
+        nome: String(formData.get('fullName') || '').trim(),
+        telefone: String(formData.get('phone') || '').trim()
+      },
+      endereco: {
+        rua: String(formData.get('address') || '').trim(),
+        numero: String(formData.get('number') || '').trim(),
+        bairro: String(formData.get('neighborhood') || '').trim(),
+        complemento: String(formData.get('complement') || '').trim(),
+        referencia: String(formData.get('reference') || '').trim()
+      },
+      itens: orderItems.map((item) => ({
+        id: item.id, commerceId: item.storeId,
+        nome: item.name,
+        quantidade: item.quantity,
+        preco: item.price,
+        total: item.price * item.quantity
+      })),
+      subtotal,
+      taxaEntrega: getCartDeliveryFee(),
+      total,
+      pagamento: {
+        forma: PAYMENT_LABELS[paymentMethod],
+        trocoPara: paymentMethod === 'cash' ? cashAmount : null,
+        troco: paymentMethod === 'cash' ? cashAmount - total : null
+      },
+      observacao: String(formData.get('orderNote') || '').trim()
+    };
+  }
+  function getCheckoutTotal() {
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return subtotal + getCartDeliveryFee();
+  }
+  function getSelectedPaymentMethod() {
+    return checkoutForm.querySelector('input[name="paymentMethod"]:checked')?.value || '';
+  }
+  function updatePaymentSummary() {
+    const paymentMethod = getSelectedPaymentMethod();
+    const cashAmount = Number(cashAmountInput.value);
+    const total = getCheckoutTotal();
+    if (!paymentMethod) {
+      checkoutPaymentSummary.innerHTML = '';
+      return;
+    }
+    checkoutPaymentSummary.innerHTML = `
+      <div class="summary-row">
+        <span>Forma de pagamento</span>
+        <strong>${PAYMENT_LABELS[paymentMethod]}</strong>
+      </div>
+      ${paymentMethod === 'cash' && cashAmount >= total ? `
+        <div class="summary-row">
+          <span>Troco para</span>
+          <strong>${formatCurrency(cashAmount)}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Troco</span>
+          <strong>${formatCurrency(cashAmount - total)}</strong>
+        </div>
+      ` : ''}
+    `;
+  }
+  function updateCashChange() {
+    const paymentMethod = getSelectedPaymentMethod();
+    const cashAmount = Number(cashAmountInput.value);
+    const total = getCheckoutTotal();
+    cashChangeGroup.classList.toggle('hidden', paymentMethod !== 'cash');
+    cashAmountInput.required = paymentMethod === 'cash';
+    if (paymentMethod !== 'cash') {
+      cashChangeMessage.textContent = '';
+      cashChangeMessage.classList.remove('error');
+      updatePaymentSummary();
+      return;
+    }
+    if (!cashAmountInput.value) {
+      cashChangeMessage.textContent = '';
+      cashChangeMessage.classList.remove('error');
+    } else if (cashAmount < total) {
+      cashChangeMessage.textContent = `O valor deve ser de pelo menos ${formatCurrency(total)}.`;
+      cashChangeMessage.classList.add('error');
+    } else {
+      cashChangeMessage.textContent = `Troco: ${formatCurrency(cashAmount - total)}`;
+      cashChangeMessage.classList.remove('error');
+    }
+    updatePaymentSummary();
+  }
+  function renderCart() {
+    if (cart.length === 0) {
+      cartItems.innerHTML = '<div class="empty-cart">Seu carrinho está vazio.</div>';
+      updateCartSummary();
+      updateCartButton();
+      return;
+    }
+    cartItems.innerHTML = cart
+      .map(
+        (item) => `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <h4>${item.name}</h4>
+              <p>R$ ${item.price.toFixed(2).replace('.', ',')} cada</p>
+            </div>
+            <div class="cart-item-controls">
+              <button class="qty-button" type="button" data-action="decrease" data-id="${item.id}">-</button>
+              <span class="cart-item-qty">${item.quantity}</span>
+              <button class="qty-button" type="button" data-action="increase" data-id="${item.id}">+</button>
+            </div>
+            <button class="remove-item" type="button" data-action="remove" data-id="${item.id}">Remover</button>
+          </div>
+        `
+      )
+      .join('');
+    updateCartSummary();
+    updateCartButton();
+    document.querySelectorAll('[data-action]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const action = button.dataset.action;
+        const itemId = button.dataset.id;
+        const itemIndex = cart.findIndex((item) => String(item.id) === String(itemId));
+        if (itemIndex === -1) {
+          return;
+        }
+        if (action === 'increase') {
+          if (!isStoreOpen(cart[itemIndex].storeId) || !isProductAvailable(cart[itemIndex].storeId, cart[itemIndex].name)) {
+            showStatus('Comércio fechado ou produto indisponível.');
+            return;
+          }
+          cart[itemIndex].quantity += 1;
+        }
+        if (action === 'decrease') {
+          cart[itemIndex].quantity -= 1;
+          if (cart[itemIndex].quantity <= 0) {
+            cart.splice(itemIndex, 1);
+          }
+        }
+        if (action === 'remove') {
+          cart.splice(itemIndex, 1);
+        }
+        renderCart();
+      });
+    });
+  }
+  function openCheckout() {
+    if (cart.length === 0) {
+      showStatus('Adicione produtos antes de finalizar o pedido.');
+      return;
+    }
+    cartButton.classList.add('hidden');
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const deliveryFee = getCartDeliveryFee();
+    const total = subtotal + deliveryFee;
+    checkoutSummaryList.innerHTML = cart
+      .map(
+        (item) => `
+          <div class="checkout-summary-item">
+            <span>${item.name} x${item.quantity}</span>
+            <strong>R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</strong>
+          </div>
+        `
+      )
+      .join('');
+    checkoutSubtotal.textContent = formatCurrency(subtotal);
+    checkoutDeliveryFee.textContent = formatCurrency(deliveryFee);
+    checkoutTotal.textContent = formatCurrency(total);
+    closeCart();
+    cartButton.classList.add('hidden');
+    checkoutPanel.classList.remove('hidden');
+    checkoutPanel.setAttribute('aria-hidden', 'false');
+    checkoutForm.reset();
+    syncCheckoutPayments();
+    isSubmittingOrder = false;
+    confirmOrderButton.disabled = !Object.keys(paymentDefaults).some(key => getPaymentSettings()[key] === true);
+    updateCashChange();
+    updatePaymentSummary();
+    checkoutContent.classList.remove('hidden');
+    checkoutSuccess.classList.add('hidden');
+  }
+  function closeCheckout() {
+    stopCustomerOrderTracking();
+    cartButton.classList.remove('hidden');
+    checkoutPanel.classList.add('hidden');
+    checkoutPanel.setAttribute('aria-hidden', 'true');
+    checkoutForm.reset();
+    checkoutContent.classList.remove('hidden');
+    checkoutSuccess.classList.add('hidden');
+  }
+  function returnToCart() {
+    closeCheckout();
+    openCart();
+  }
+  function buildSuccessSummary(order) {
+    const paymentSummary = `
+      <div class="success-summary-item"><span>Forma de pagamento</span><strong>${order.pagamento.forma}</strong></div>
+      ${order.pagamento.trocoPara !== null ? `
+        <div class="success-summary-item"><span>Troco para</span><strong>${formatCurrency(order.pagamento.trocoPara)}</strong></div>
+        <div class="success-summary-item"><span>Troco</span><strong>${formatCurrency(order.pagamento.troco)}</strong></div>
+      ` : ''}
+    `;
+    return `
+      <div class="success-summary-item"><span>Cliente</span><strong>${order.cliente.nome}</strong></div>
+      <div class="success-summary-item"><span>Telefone</span><strong>${order.cliente.telefone}</strong></div>
+      <div class="success-summary-item"><span>Endereço de entrega</span><strong>${order.endereco.rua}, ${order.endereco.numero}</strong></div>
+      <div class="success-summary-item"><span>Bairro</span><strong>${order.endereco.bairro}</strong></div>
+      ${order.endereco.complemento ? `<div class="success-summary-item"><span>Complemento</span><strong>${order.endereco.complemento}</strong></div>` : ''}
+      ${order.endereco.referencia ? `<div class="success-summary-item"><span>Referência</span><strong>${order.endereco.referencia}</strong></div>` : ''}
+      ${order.observacao ? `<div class="success-summary-item"><span>Observação</span><strong>${order.observacao}</strong></div>` : ''}
+      <div class="success-summary-heading">Itens comprados</div>
+    ` + order.itens
+      .map(
+        (item) => `
+          <div class="success-summary-item">
+            <span>${item.nome} x${item.quantidade}</span>
+            <strong>${formatCurrency(item.total)}</strong>
+          </div>
+        `
+      )
+      .join('') + `
+        <div class="success-summary-item">
+          <span>Subtotal</span>
+          <strong>${formatCurrency(order.subtotal)}</strong>
+        </div>
+        <div class="success-summary-item">
+          <span>Taxa de entrega</span>
+          <strong>${formatCurrency(order.taxaEntrega)}</strong>
+        </div>
+        <div class="success-summary-item">
+          <span>Total</span>
+          <strong>${formatCurrency(order.total)}</strong>
+        </div>
+      ` + paymentSummary;
+  }
+  function renderSuccessDeliveryStatus(order) {
+    const statusLabels = {
+      Novo: 'Pedido recebido',
+      'Em preparo': 'Pedido em preparo',
+      'Saiu para entrega': 'Pedido saiu para entrega',
+      Entregue: 'Pedido entregue',
+      Cancelado: 'Pedido cancelado'
+    };
+    successDeliveryStatus.innerHTML = `
+      <strong>${statusLabels[order.status || 'Novo'] || 'Status do pedido'}</strong>
+      ${order.status === 'Saiu para entrega' && order.entregadorNome ? `<span>Entregador: ${escapeAdminValue(order.entregadorNome)}</span>` : ''}
+    `;
+  }
+  function refreshCustomerOrderStatus() {
+    if (!activeCustomerOrderNumber) {
+      return;
+    }
+    const order = getSavedOrders().find((item) => String(item.numero) === String(activeCustomerOrderNumber));
+    if (order) {
+      renderSuccessDeliveryStatus(order);
+    }
+  }
+  function startCustomerOrderTracking(orderNumber) {
+    activeCustomerOrderNumber = orderNumber;
+    refreshCustomerOrderStatus();
+    if (customerOrderRefreshTimer === null) {
+      customerOrderRefreshTimer = window.setInterval(refreshCustomerOrderStatus, 5000);
+    }
+  }
+  function stopCustomerOrderTracking() {
+    activeCustomerOrderNumber = null;
+    if (customerOrderRefreshTimer !== null) {
+      window.clearInterval(customerOrderRefreshTimer);
+      customerOrderRefreshTimer = null;
+    }
+  }
+  function handleCheckoutSubmit(event) {
+    event.preventDefault();
+    if (!isCustomerView()) return;
+    if (!currentUser?.id) {
+      showStatus('Entre na sua conta para finalizar o pedido.');
+      return;
+    }
+    if (!cart.length || !isStoreOpen(cart[0].storeId) || cart.some(item => String(item.storeId) !== String(cart[0].storeId) || !isProductAvailable(item.storeId, item.name))) { showStatus('O comércio está fechado ou há produtos indisponíveis no carrinho.'); return; }
+    if (isSubmittingOrder) {
+      return;
+    }
+    const formData = new FormData(checkoutForm);
+    const fullName = String(formData.get('fullName') || '').trim();
+    const phone = String(formData.get('phone') || '').trim();
+    const address = String(formData.get('address') || '').trim();
+    const number = String(formData.get('number') || '').trim();
+    const neighborhood = String(formData.get('neighborhood') || '').trim();
+    const paymentMethod = String(formData.get('paymentMethod') || '').trim();
+    if (getPaymentSettings()[paymentMethod] !== true) { syncCheckoutPayments(); showStatus('Selecione uma forma de pagamento disponível.'); return; }
+    const cashAmount = Number(formData.get('cashAmount'));
+    const total = getCheckoutTotal();
+    if (!fullName || !phone || !address || !number || !neighborhood || !paymentMethod) {
+      showStatus('Preencha todos os campos obrigatórios.');
+      return;
+    }
+    if (!Number.isFinite(total) || total <= 0 || cart.some(item => !Number.isFinite(item.price) || item.price <= 0 || !Number.isInteger(item.quantity) || item.quantity <= 0)) {
+      showStatus('Há valores inválidos no carrinho. Remova os itens e adicione novamente.');
+      return;
+    }
+    if (paymentMethod === 'cash' && (!Number.isFinite(cashAmount) || !cashAmount || cashAmount < total)) {
+      cashChangeMessage.textContent = `O valor deve ser de pelo menos ${formatCurrency(total)}.`;
+      cashChangeMessage.classList.add('error');
+      cashAmountInput.focus();
+      return;
+    }
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const orderItems = cart.map((item) => ({ ...item }));
+    let order;
+    try { order = buildOrderFromCheckout(formData, orderItems, paymentMethod, cashAmount, subtotal, total); saveOrder(order); } catch { showStatus('Não foi possível salvar o pedido. Tente novamente.'); return; }
+    isSubmittingOrder = true;
+    confirmOrderButton.disabled = true;
+    successOrderNumber.textContent = `Pedido #${order.numero}`;
+    renderSuccessDeliveryStatus(order);
+    successSummary.innerHTML = buildSuccessSummary(order);
+    startCustomerOrderTracking(order.numero);
+    checkoutContent.classList.add('hidden');
+    checkoutSuccess.classList.remove('hidden');
+    showStatus('Pedido realizado com sucesso!');
+    cart.length = 0;
+    renderCart();
+    updateCartButton();
+  }
+  function addProductToCart(product) {
+    const price = Number(product.price);
+    if (!Number.isFinite(price) || price <= 0) {
+      showStatus('Preço do produto indisponível.');
+      return;
+    }
+    if (!isCustomerView() || !isStoreOpen(product.storeId) || !isProductAvailable(product.storeId, product.name)) { showStatus('Comércio fechado ou produto indisponível.'); return; }
+    if (cart.length && String(cart[0].storeId) !== String(product.storeId)) { showStatus('Escolha produtos de um comércio por pedido.'); return; }
+    const existingItem = cart.find((item) => String(item.id) === String(product.id));
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push({ ...product, price, quantity: 1 });
+    }
+    renderCart();
+    showStatus(`${product.name} adicionado ao carrinho`);
+  }
+  function openStoreMenu(storeId) {
+    loadCommerceProducts();
+    menuPanel.dataset.storeId = storeId;
+    const store = stores.find((item) => String(item.id) === String(storeId));
+    if (!store) {
+      return;
+    }
+    menuStoreCategory.textContent = store.category;
+    menuStoreName.textContent = store.name;
+    menuStoreRating.textContent = `⭐ ${store.rating}`;
+    menuProducts.innerHTML = store.products
+      .map((product) => {
+        const productAvailable = isProductAvailable(store.id, product.name);
+        const canAddProduct = isStoreOpen(store.id) && productAvailable;
+        return `
+          <article class="product-item">
+            <img src="${escapeAdminValue(product.image)}" alt="${escapeAdminValue(product.name)}" />
+            <div class="product-info">
+              <h3>${escapeAdminValue(product.name)}</h3>
+              <p>${escapeAdminValue(product.description)}</p>
+              <div class="product-footer">
+                <strong>R$ ${product.price.toFixed(2).replace('.', ',')}</strong>
+                <button
+                  class="add-button"
+                  type="button"
+                  data-product-id="${escapeAdminValue(product.id)}"
+                  data-product-name="${escapeAdminValue(product.name)}"
+                  data-product-price="${product.price}"
+                  data-store-id="${store.id}"
+                  ${canAddProduct ? '' : 'disabled'}
+                >
+                  ${productAvailable ? (isStoreOpen(store.id) ? 'Adicionar ao carrinho' : 'Loja fechada') : 'Indisponível'}
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      })
+      .join('');
+    menuPanel.classList.remove('hidden');
+    menuPanel.setAttribute('aria-hidden', 'false');
+    document.querySelectorAll('.add-button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const productId = button.dataset.productId;
+        const productName = button.dataset.productName;
+        const productPrice = Number(button.dataset.productPrice);
+        const storeId = button.dataset.storeId;
+        const store = stores.find((item) => String(item.id) === String(storeId));
+        if (!store || !isStoreOpen(store.id)) {
+          showStatus('A loja está fechada no momento.');
+          return;
+        }
+        if (!isProductAvailable(button.dataset.storeId, productName)) {
+          showStatus('Este produto está indisponível no momento.');
+          return;
+        }
+        if (cart.length > 0 && String(cart[0].storeId) !== String(storeId)) {
+          if (!window.confirm('Seu carrinho possui produtos de outro comércio. Deseja limpá-lo?')) return;
+          cart.splice(0, cart.length);
+          renderCart();
+        }
+        addProductToCart({
+          id: productId, productId, commerceId: storeId,
+          name: productName,
+          price: productPrice,
+          storeId,
+          storeName: store?.name || '',
+          deliveryFee: parseDeliveryFee(store?.delivery)
+        });
+      });
+    });
+  }
+  function closeStoreMenu() {
+    menuPanel.classList.add('hidden');
+    menuPanel.setAttribute('aria-hidden', 'true');
+  }
+  function renderStores() {
+    loadCommerceProducts();
+    const filteredStores = getFilteredStores();
+    resultsCount.textContent = `${filteredStores.length} itens`;
+    if (filteredStores.length === 0) {
+      storeList.innerHTML = `
+        <div class="empty-state">
+          <p>Nenhum comércio encontrado.</p>
+          <small>Tente outra busca ou categoria.</small>
+        </div>
+      `;
+      return;
+    }
+    storeList.innerHTML = filteredStores
+      .map(
+        (store) => `
+          <article class="store-card">
+            <div class="store-header">
+              <div class="store-badge">${store.icon}</div>
+              <div class="store-main">
+                <h3 class="store-name">${escapeAdminValue(store.name)}</h3>
+                <p class="store-category">${escapeAdminValue(store.category)}</p>
+              </div>
+            </div>
+            <div class="store-meta">
+              <span class="store-rating">⭐ ${store.rating}</span>
+              <span>${store.time}</span>
+            </div>
+            <div class="store-meta">
+              <span>${store.delivery}</span>
+              <span class="store-open-state ${isStoreOpen(store.id) ? '' : 'closed'}">${isStoreOpen(store.id) ? 'Aberto' : 'Fechada'}</span>
+            </div>
+            <button class="store-button" type="button" data-store-id="${store.id}">
+              Abrir comércio
+            </button>
+          </article>
+        `
+      )
+      .join('');
+    document.querySelectorAll('.store-button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const storeId = button.dataset.storeId;
+        openStoreMenu(storeId);
+      });
+    });
+  }
+  const adminStatuses = ['Novo', 'Em preparo', 'Saiu para entrega', 'Entregue', 'Cancelado'];
+  const openAdminButton = document.getElementById('openAdminButton');
+  const closeAdminButton = document.getElementById('closeAdminButton');
+  const refreshAdminButton = document.getElementById('refreshAdminButton');
+  const adminPanel = document.getElementById('adminPanel');
+  const adminMenuButton = document.getElementById('adminMenuButton');
+  const adminSidebar = document.getElementById('adminSidebar');
+  const adminMenuOverlay = document.getElementById('adminMenuOverlay');
+  const adminPendingCount = document.getElementById('adminPendingCount');
+  const adminUnreadCount = document.getElementById('adminUnreadCount');
+  const adminHistoryCount = document.getElementById('adminHistoryCount');
+  const adminPendingSectionCount = document.getElementById('adminPendingSectionCount');
+  const adminHistorySectionCount = document.getElementById('adminHistorySectionCount');
+  const adminPendingOrderList = document.getElementById('adminPendingOrderList');
+  const adminHistoryOrderList = document.getElementById('adminHistoryOrderList');
+  const storeOpenToggle = document.getElementById('storeOpenToggle');
+  const storeStatusMessage = document.getElementById('storeStatusMessage');
+  const adminStoreName = document.getElementById('adminStoreName');
+  const adminProductAvailabilityList = document.getElementById('adminProductAvailabilityList');
+  const adminProductSummary = document.getElementById('adminProductSummary');
+  const adminPageTitle = document.getElementById('adminPageTitle');
+  const adminNavigationButtons = document.querySelectorAll('[data-admin-page]');
+  const adminPages = {
+    profile: document.getElementById('adminStorePage'),
+    orders: document.getElementById('adminOrdersPage'),
+    products: document.getElementById('adminProductsPage'),
+    reports: document.getElementById('adminReportsPage'),
+    settings: document.getElementById('adminSettingsPage')
+  };
+  const adminDetailsModal = document.getElementById('adminDetailsModal');
+  const closeAdminDetailsButton = document.getElementById('closeAdminDetailsButton');
+  const closeAdminDetailsFooterButton = document.getElementById('closeAdminDetailsFooterButton');
+  const adminOrderDetails = document.getElementById('adminOrderDetails');
+  const cancelOrderModal = document.getElementById('cancelOrderModal');
+  const closeCancelOrderButton = document.getElementById('closeCancelOrderButton');
+  const keepOrderButton = document.getElementById('keepOrderButton');
+  const confirmCancelOrderButton = document.getElementById('confirmCancelOrderButton');
+  const cancelReasonInput = document.getElementById('cancelReasonInput');
+  const cancelReasonError = document.getElementById('cancelReasonError');
+  const deliveryConfirmModal = document.getElementById('deliveryConfirmModal');
+  const confirmDeliveryButton = document.getElementById('confirmDeliveryButton');
+  const cancelDeliveryButton = document.getElementById('cancelDeliveryButton');
+  let pendingDeliveryOrderNumber = null;
+  let adminRefreshTimer = null;
+  let pendingCancellationOrderNumber = null;
+  let activeAdminPage = 'orders';
+  function openAdminMenu() {
+    if (!isCommerceSession()) return;
+    adminSidebar.inert = false;
+    adminSidebar.classList.add('open');
+    closeAdminButton.focus();
+    adminMenuOverlay.classList.remove('hidden');
+    adminMenuOverlay.setAttribute('aria-hidden', 'false');
+    adminSidebar.setAttribute('aria-hidden', 'false');
+    adminMenuButton.setAttribute('aria-expanded', 'true');
+  }
+  function closeAdminMenu() {
+    if (adminSidebar.contains(document.activeElement)) adminMenuButton.focus();
+    adminSidebar.inert = true;
+    adminSidebar.classList.remove('open');
+    adminMenuOverlay.classList.add('hidden');
+    adminMenuOverlay.setAttribute('aria-hidden', 'true');
+    adminSidebar.setAttribute('aria-hidden', 'true');
+    adminMenuButton.setAttribute('aria-expanded', 'false');
+  }
+  function escapeAdminValue(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+  function formatOrderDate(dateValue) {
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) {
+      return 'Data não informada';
+    }
+    return date.toLocaleString('pt-BR', {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    });
+  }
+  function getAdminOrders() {
+    return getSavedOrders()
+      .filter(order => (isMasterSession() && !isAdminPreview()) || String((order.commerceId || '1')) === String(getActiveCommerceId()))
+      .map((order) => ({
+        ...order,
+        status: order.status || 'Novo',
+        visualizado: order.visualizado === undefined ? true : Boolean(order.visualizado)
+      }))
+      .sort((firstOrder, secondOrder) => {
+        const firstDate = new Date(firstOrder.data).getTime() || 0;
+        const secondDate = new Date(secondOrder.data).getTime() || 0;
+        return secondDate - firstDate;
+      });
+  }
+  function setAdminPage(pageName) {
+    if (!isCommerceSession()) return;
+    if (pageName === 'exit') {
+      logout();
+      return;
+    }
+    const showProducts = pageName === 'products';
+    activeAdminPage = adminPages[pageName] ? pageName : 'orders';
+    const pageTitles = {
+      profile: 'Meus dados',
+      orders: 'Pedidos',
+      products: 'Produtos',
+      reports: 'Relatório',
+      settings: 'Configurações'
+    };
+    adminPageTitle.textContent = pageTitles[activeAdminPage];
+    if (activeAdminPage === 'reports') renderSalesReport();
+    if (activeAdminPage === 'products') {
+      resetProductEditor();
+      renderProductControls();
+    }
+    Object.entries(adminPages).forEach(([name, page]) => {
+      page.classList.toggle('hidden', name !== activeAdminPage);
+    });
+    adminNavigationButtons.forEach((button) => {
+      const isActive = button.dataset.adminPage === activeAdminPage;
+      button.classList.toggle('active', isActive);
+      if (isActive) {
+        button.setAttribute('aria-current', 'page');
+      } else {
+        button.removeAttribute('aria-current');
+      }
+    });
+    closeAdminMenu();
+    if (showProducts) document.getElementById('adminProductsPage').scrollIntoView({ block: 'start' });
+  }
+  function getOrderAgeLabel(dateValue) {
+    const receivedAt = new Date(dateValue).getTime();
+    const elapsedMinutes = Math.max(0, Math.floor((Date.now() - receivedAt) / 60000));
+    if (!Number.isFinite(receivedAt)) {
+      return 'tempo indisponível';
+    }
+    if (elapsedMinutes < 1) {
+      return 'agora';
+    }
+    return `há ${elapsedMinutes} min`;
+  }
+  function isOrderLate(order) {
+    if (['Entregue', 'Cancelado'].includes(order.status)) {
+      return false;
+    }
+    const receivedAt = new Date(order.data).getTime();
+    return Number.isFinite(receivedAt) && Date.now() - receivedAt >= 30 * 60000;
+  }
+  function renderStoreControls() {
+    const store = getCurrentCommerceStore();
+    if (!store) {
+      adminStoreName.textContent = 'Comércio não encontrado';
+      storeOpenToggle.checked = false;
+      storeStatusMessage.textContent = 'Dados do comércio indisponíveis';
+      storeStatusMessage.classList.add('closed');
+      return;
+    }
+    const storeIsOpen = isStoreOpen(store.id);
+    adminStoreName.textContent = store.name;
+    storeOpenToggle.checked = storeIsOpen;
+    storeStatusMessage.textContent = storeIsOpen
+      ? 'Aberto para novos pedidos'
+      : 'Pausado para novos pedidos';
+    storeStatusMessage.classList.toggle('closed', !storeIsOpen);
+  }
+  function renderProductControls() {
+    loadCommerceProducts();
+    const store = getCurrentCommerceStore();
+    if (!store) return;
+    const totalProducts = store.products.length;
+    const availableProducts = store.products.filter(product => isProductAvailable(store.id, product.name)).length;
+    adminProductSummary.textContent = `${availableProducts} de ${totalProducts} produtos disponíveis`;
+    const categoryFilter = document.getElementById('commerceProductCategoryFilter');
+    const selected = categoryFilter.value;
+    categoryFilter.innerHTML = '<option value="">Todas as categorias</option>' + [...new Set(store.products.map(product => product.category))].map(category => `<option value="${escapeAdminValue(category)}">${escapeAdminValue(category)}</option>`).join('');
+    categoryFilter.value = selected;
+    const search = document.getElementById('commerceProductSearch').value.trim().toLowerCase();
+    adminProductAvailabilityList.innerHTML = `
+      <div class="admin-product-store-group">
+        <div class="admin-product-toggle-list" role="list">
+          ${store.products.map((product, index) => {
+            if ((categoryFilter.value && product.category !== categoryFilter.value) || !product.name.toLowerCase().includes(search)) return '';
+            const productKey = getProductKey(store.id, product.name);
+            const available = isProductAvailable(store.id, product.name);
+            return `
+              <label class="admin-product-toggle" role="listitem">
+                <span class="admin-product-info"><strong>${escapeAdminValue(product.name)}</strong><small>${escapeAdminValue(product.category)} · ${formatCurrency(product.price)} · ${Number.isFinite(Number(product.preparationTime)) && Number(product.preparationTime) > 0 ? `${Number(product.preparationTime)} min` : '-'}</small></span>
+                <span class="switch switch-small"><input type="checkbox" data-product-availability="${escapeAdminValue(productKey)}" data-store-id="${store.id}" data-product-name="${escapeAdminValue(product.name)}" ${available ? 'checked' : ''} aria-label="Disponibilidade de ${escapeAdminValue(product.name)}" /><span class="switch-slider"></span></span>
+              </label><button type="button" class="admin-secondary-button" data-edit-product="${index}" data-edit-store="${store.id}">Editar ${escapeAdminValue(product.name)}</button><button type="button" class="admin-danger-button" data-delete-product="${index}">Excluir ${escapeAdminValue(product.name)}</button>
+            `;
+          }).join('') || '<p>Nenhum produto cadastrado.</p>'}
+        </div>
+      </div>
+    `;
+    adminProductAvailabilityList.querySelectorAll('[data-edit-product]').forEach(button => button.addEventListener('click', () => editCommerceProduct(button.dataset.editStore, Number(button.dataset.editProduct))));
+    adminProductAvailabilityList.querySelectorAll('[data-delete-product]').forEach(button => button.addEventListener('click', () => { editCommerceProduct(store.id, Number(button.dataset.deleteProduct)); document.getElementById('cancelProductEdit').click(); }));
+    adminProductAvailabilityList.querySelectorAll('[data-product-availability]').forEach((input) => {
+      input.addEventListener('change', () => {
+        try { saveProductAvailability(input.dataset.storeId, input.dataset.productName, input.checked); }
+        catch { showStatus('Não foi possível salvar a disponibilidade.'); }
+        renderProductControls();
+      });
+    });
+  }
+  function saveAdminOrders(orders) {
+    if (!isCommerceSession()) throw new Error('Acesso exclusivo do comércio.');
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+  }
+  function markOrderAsViewed(orderNumber) {
+    if (!isCommerceSession()) return;
+    const savedOrders = getSavedOrders();
+    const order = savedOrders.find((savedOrder) => String(savedOrder.numero) === String(orderNumber) && ((isMasterSession() && !isAdminPreview()) || String((savedOrder.commerceId || '1')) === String(getActiveCommerceId())));
+    if (!order || order.visualizado === true) {
+      return;
+    }
+    order.visualizado = true;
+    try { saveAdminOrders(savedOrders); } catch { showStatus('Não foi possível salvar o pedido.'); renderAdminOrders(); return; }
+  }
+  function openAdminOrderDetails(orderNumber) {
+    if (!isCommerceSession()) return;
+    markOrderAsViewed(orderNumber);
+    renderAdminOrders();
+    const order = getAdminOrders().find((savedOrder) => String(savedOrder.numero) === String(orderNumber));
+    renderAdminOrderDetails(order);
+  }
+  function renderAdminOrderDetails(order) {
+    if (!order) {
+      adminDetailsModal.classList.add('hidden');
+      adminDetailsModal.setAttribute('aria-hidden', 'true');
+      adminOrderDetails.innerHTML = '';
+      return;
+    }
+    const address = order.endereco || {};
+    const payment = order.pagamento || {};
+    const items = Array.isArray(order.itens) ? order.itens : [];
+    adminOrderDetails.innerHTML = `
+      <h3>Detalhes do pedido #${escapeAdminValue(order.numero)}</h3>
+      <div class="admin-detail-section">
+        <h4>Cliente</h4>
+        <div class="admin-detail-row"><span class="admin-detail-label">Nome</span><strong class="admin-detail-value">${escapeAdminValue(order.cliente?.nome)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Telefone</span><strong class="admin-detail-value">${escapeAdminValue(order.cliente?.telefone)}</strong></div>
+      </div>
+      <div class="admin-detail-section">
+        <h4>Entrega</h4>
+        <div class="admin-detail-row"><span class="admin-detail-label">Endereço</span><strong class="admin-detail-value">${escapeAdminValue(address.rua)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Número</span><strong class="admin-detail-value">${escapeAdminValue(address.numero)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Bairro</span><strong class="admin-detail-value">${escapeAdminValue(address.bairro)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Complemento</span><strong class="admin-detail-value">${escapeAdminValue(address.complemento || 'Não informado')}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Referência</span><strong class="admin-detail-value">${escapeAdminValue(address.referencia || 'Não informado')}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Observação</span><strong class="admin-detail-value">${escapeAdminValue(order.observacao || 'Nenhuma')}</strong></div>
+      </div>
+      <div class="admin-detail-section">
+        <h4>Produtos</h4>
+        <div class="admin-detail-items">
+          ${items.map((item) => `
+            <div class="admin-detail-row">
+              <span class="admin-detail-label">${escapeAdminValue(item.nome)} x${escapeAdminValue(item.quantidade)}<br>${formatCurrency(Number(item.preco) || 0)} cada</span>
+              <strong class="admin-detail-value">${formatCurrency(Number(item.total) || 0)}</strong>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="admin-detail-section">
+        <h4>Valores e pagamento</h4>
+        <div class="admin-detail-row"><span class="admin-detail-label">Subtotal</span><strong class="admin-detail-value">${formatCurrency(Number(order.subtotal) || 0)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Taxa de entrega</span><strong class="admin-detail-value">${formatCurrency(Number(order.taxaEntrega) || 0)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Total</span><strong class="admin-detail-value">${formatCurrency(Number(order.total) || 0)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Forma de pagamento</span><strong class="admin-detail-value">${escapeAdminValue(payment.forma)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Troco para</span><strong class="admin-detail-value">${payment.trocoPara === null || payment.trocoPara === undefined ? 'Não se aplica' : formatCurrency(Number(payment.trocoPara) || 0)}</strong></div>
+        <div class="admin-detail-row"><span class="admin-detail-label">Troco</span><strong class="admin-detail-value">${payment.troco === null || payment.troco === undefined ? 'Não se aplica' : formatCurrency(Number(payment.troco) || 0)}</strong></div>
+      </div>
+      ${order.status === 'Cancelado' ? `
+        <div class="admin-detail-section">
+          <h4>Cancelamento</h4>
+          <div class="admin-detail-row"><span class="admin-detail-label">Motivo do cancelamento</span><strong class="admin-detail-value">${escapeAdminValue(order.motivoCancelamento || 'Não informado')}</strong></div>
+        </div>
+      ` : ''}
+    `;
+    adminDetailsModal.classList.remove('hidden');
+    adminDetailsModal.setAttribute('aria-hidden', 'false');
+  }
+  function closeAdminOrderDetails() {
+    renderAdminOrderDetails(null);
+  }
+  function openCancelOrderConfirmation(orderNumber) {
+    if (!isCommerceSession()) return;
+    pendingCancellationOrderNumber = orderNumber;
+    cancelReasonInput.value = '';
+    cancelReasonError.textContent = '';
+    cancelOrderModal.classList.remove('hidden');
+    cancelOrderModal.setAttribute('aria-hidden', 'false');
+    cancelReasonInput.focus();
+    const ask = getCommerceSettings().confirmCancellation;
+    document.getElementById('cancelOrderTitle').textContent = ask ? 'Cancelar pedido?' : 'Motivo do cancelamento';
+    document.querySelector('.cancel-order-content > p').textContent = ask ? 'Tem certeza que deseja cancelar este pedido?' : 'Informe o motivo para registrar o cancelamento.';
+    confirmCancelOrderButton.textContent = ask ? 'Sim, cancelar pedido' : 'Registrar cancelamento';
+  }
+  function closeCancelOrderConfirmation() {
+    pendingCancellationOrderNumber = null;
+    cancelReasonInput.value = '';
+    cancelReasonError.textContent = '';
+    cancelOrderModal.classList.add('hidden');
+    cancelOrderModal.setAttribute('aria-hidden', 'true');
+    renderAdminOrders();
+  }
+  function confirmOrderCancellation() {
+    if (!isCommerceSession()) return;
+    const reason = cancelReasonInput.value.trim();
+    if (!reason) {
+      cancelReasonError.textContent = 'Informe o motivo do cancelamento.';
+      cancelReasonInput.focus();
+      return;
+    }
+    const savedOrders = getSavedOrders();
+    const order = savedOrders.find((savedOrder) => String(savedOrder.numero) === String(pendingCancellationOrderNumber) && ((isMasterSession() && !isAdminPreview()) || String((savedOrder.commerceId || '1')) === String(getActiveCommerceId())));
+    if (!order) {
+      closeCancelOrderConfirmation();
+      return;
+    }
+    if (['Entregue', 'Cancelado'].includes(order.status)) {
+      closeCancelOrderConfirmation();
+      return;
+    }
+    order.status = 'Cancelado';
+    order.motivoCancelamento = reason;
+    try { saveAdminOrders(savedOrders); } catch { showStatus('Não foi possível salvar o pedido.'); renderAdminOrders(); return; }
+    pendingCancellationOrderNumber = null;
+    cancelOrderModal.classList.add('hidden');
+    cancelOrderModal.setAttribute('aria-hidden', 'true');
+    renderAdminOrders();
+  }
+  function updateAdminOrderStatus(orderNumber, status) {
+    if (!isCommerceSession()) return;
+    const savedOrders = getSavedOrders();
+    const order = savedOrders.find((savedOrder) => String(savedOrder.numero) === String(orderNumber) && ((isMasterSession() && !isAdminPreview()) || String((savedOrder.commerceId || '1')) === String(getActiveCommerceId())));
+    const allowedStatuses = {
+      Novo: ['Em preparo', 'Cancelado'],
+      'Em preparo': ['Saiu para entrega', 'Cancelado'],
+      'Saiu para entrega': [],
+      Entregue: [],
+      Cancelado: []
+    };
+    const currentStatus = order ? (order.status || 'Novo') : '';
+    if (!order || !allowedStatuses[currentStatus]?.includes(status)) {
+      showStatus('Não foi possível atualizar o status do pedido. Atualize a lista e tente novamente.');
+      return;
+    }
+    if (status === 'Cancelado') {
+      openCancelOrderConfirmation(orderNumber);
+      return;
+    }
+    order.status = status;
+    delete order.motivoCancelamento;
+    try { saveAdminOrders(savedOrders); } catch { showStatus('Não foi possível salvar o pedido.'); renderAdminOrders(); return; }
+    if (status === 'Em preparo') {
+      activeOrderFilter = 'active';
+      document.querySelectorAll('[data-order-filter]').forEach(item => { item.classList.toggle('active', item.dataset.orderFilter === 'active'); item.setAttribute('aria-pressed', String(item.dataset.orderFilter === 'active')); });
+    }
+    renderAdminOrders();
+  }
+  function openDeliveryConfirmation(orderNumber) {
+    if (!isCustomerView()) return;
+    pendingDeliveryOrderNumber = orderNumber;
+    deliveryConfirmModal.classList.remove('hidden');
+    deliveryConfirmModal.setAttribute('aria-hidden', 'false');
+    confirmDeliveryButton.focus();
+  }
+  function closeDeliveryConfirmation() {
+    pendingDeliveryOrderNumber = null;
+    deliveryConfirmModal.classList.add('hidden');
+    deliveryConfirmModal.setAttribute('aria-hidden', 'true');
+  }
+  function confirmClientOrderDelivery(orderNumber) {
+    if (!isCustomerView()) return;
+    const savedOrders = getSavedOrders();
+    const order = savedOrders.find(savedOrder => String(savedOrder.numero) === String(orderNumber) && isCurrentCustomerOrder(savedOrder));
+    if (!order || order.status !== 'Saiu para entrega') return;
+    order.status = 'Entregue';
+    order.entregueConfirmadoEm = new Date().toISOString();
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(savedOrders));
+    renderClientOrders();
+    if (activeCustomerOrderNumber === orderNumber) renderSuccessDeliveryStatus(order);
+    showStatus('Entrega confirmada. Obrigado!');
+  }
+  function renderAdminOrders(selectedOrderNumber = '') {
+    if (!isCommerceSession()) return;
+    const orders = getAdminOrders();
+    const allPendingOrders = orders.filter((order) => !['Entregue', 'Cancelado'].includes(order.status));
+    const allHistoryOrders = orders.filter((order) => ['Entregue', 'Cancelado'].includes(order.status));
+    const pendingOrders = allPendingOrders.filter(order => activeOrderFilter === 'new' ? order.status === 'Novo' : ['Em preparo', 'Saiu para entrega'].includes(order.status));
+    const historyOrders = allHistoryOrders;
+    document.getElementById('adminActiveOrders').classList.toggle('hidden', activeOrderFilter === 'completed');
+    document.getElementById('adminHistoryPage').classList.toggle('hidden', activeOrderFilter !== 'completed');
+    document.querySelector('#adminActiveOrders h3').textContent = activeOrderFilter === 'new' ? 'Pedidos novos' : 'Pedidos ativos';
+    const unreadOrders = orders.filter((order) => order.visualizado === false);
+    adminPendingCount.textContent = allPendingOrders.length;
+    adminUnreadCount.textContent = `${unreadOrders.length} ${unreadOrders.length === 1 ? 'novo' : 'novos'}`;
+    adminHistoryCount.textContent = allHistoryOrders.length;
+    adminPendingSectionCount.textContent = pendingOrders.length;
+    adminHistorySectionCount.textContent = historyOrders.length;
+    const renderGroup = (groupOrders, listElement, emptyMessage, canEditStatus) => {
+      if (groupOrders.length === 0) {
+        listElement.innerHTML = `<div class="admin-empty-state">${emptyMessage}</div>`;
+        return;
+      }
+      listElement.innerHTML = groupOrders.map((order) => `
+        <article class="admin-order-card ${isOrderLate(order) ? 'late' : ''}">
+          <div class="admin-order-card-header">
+            <strong class="admin-order-number">#${escapeAdminValue(order.numero)}</strong>
+            <span class="admin-order-header-meta">
+              ${order.visualizado === false ? '<span class="admin-new-badge">NOVO</span>' : ''}
+              ${isOrderLate(order) ? '<span class="admin-late-badge">ATRASADO</span>' : ''}
+              <span class="admin-order-age">${escapeAdminValue(getOrderAgeLabel(order.data))}</span>
+              <span class="admin-order-date">${escapeAdminValue(formatOrderDate(order.data))}</span>
+            </span>
+          </div>
+          <strong class="admin-order-customer">${escapeAdminValue(order.cliente?.nome || 'Cliente não informado')}</strong>
+          <div class="admin-order-meta">
+            <strong>${formatCurrency(Number(order.total) || 0)}</strong>
+          </div>
+          <div class="admin-order-meta">
+            <span>${escapeAdminValue(order.pagamento?.forma || 'Pagamento não informado')}</span>
+            <strong class="admin-order-status-label">${escapeAdminValue(order.status)}</strong>
+          </div>
+          ${canEditStatus && order.status === 'Novo' ? `<button class="admin-order-action-button" type="button" data-order-action="prepare" data-order-number="${escapeAdminValue(order.numero)}">Preparar</button>` : ''}
+          ${canEditStatus && order.status === 'Em preparo' ? `<button class="admin-order-action-button" type="button" data-order-action="deliver" data-order-number="${escapeAdminValue(order.numero)}">Entregar pedido</button>` : ''}
+          ${canEditStatus && ['Novo', 'Em preparo'].includes(order.status) ? `<button class="admin-danger-button" type="button" data-order-action="cancel" data-order-number="${escapeAdminValue(order.numero)}">Cancelar pedido</button>` : ''}
+          <button class="admin-details-button" type="button" data-order-details="${escapeAdminValue(order.numero)}">Ver detalhes</button>
+        </article>
+      `).join('');
+    };
+    renderGroup(historyOrders, adminHistoryOrderList, 'Ainda não existem pedidos no histórico.', false);
+    if (activeAdminPage === 'reports') renderSalesReport();
+    if (selectedOrderNumber) {
+      const selectedOrder = orders.find((order) => String(order.numero) === String(selectedOrderNumber));
+      renderAdminOrderDetails(selectedOrder);
+    }
+  }
+  function openAdminPanel() {
+    if (!isCommerceSession()) return;
+    loadCommerceProducts();
+    setAdminPage('orders');
+    closeAdminMenu();
+    renderStoreControls();
+    renderProductControls();
+    renderAdminOrders();
+    adminPanel.classList.remove('hidden');
+    adminPanel.setAttribute('aria-hidden', 'false');
+    adminMenuButton.setAttribute('aria-expanded', 'false');
+    loadCommerceForms();
+    configureAdminRefresh();
+  }
+  function closeAdminPanel() { closeAdminMenu(); }
+  function closeClientOrders() {
+    document.getElementById('clientOrdersPage').classList.add('hidden');
+    if (clientOrdersTimer !== null) window.clearInterval(clientOrdersTimer);
+    clientOrdersTimer = null;
+  }
+  function isCurrentCustomerOrder(order) {
+    if (!currentUser) return false;
+    if (order.customerId) return String(order.customerId) === String(currentUser.id);
+    return normalizeEmail(order.customerEmail || 'cliente@teste.com') === normalizeEmail(currentUser.email);
+  }
+  function renderClientOrders() {
+    if (!isCustomerView()) return;
+    // Older orders belong to the single demo client supported by this project.
+    const orders = getSavedOrders().filter(isCurrentCustomerOrder).slice().reverse();
+    const list = document.getElementById('clientOrdersList');
+    const markup = orders.map(order => `<article class="client-order-card">
+      <div class="client-orders-header"><strong>Pedido #${escapeAdminValue(order.numero)}</strong><strong>${escapeAdminValue(order.status || 'Novo')}</strong></div>
+      <p>${escapeAdminValue(formatOrderDate(order.data))}</p>
+      <details><summary>Ver detalhes do pedido</summary>
+        <ul>${(order.itens || []).map(item => `<li>${escapeAdminValue(item.quantidade)} × ${escapeAdminValue(item.nome)} — ${formatCurrency(Number(item.total) || 0)}</li>`).join('')}</ul>
+        <p>Pagamento: ${escapeAdminValue(order.pagamento?.forma || 'Não informado')}</p>
+        <p>Entrega: ${escapeAdminValue([order.endereco?.rua, order.endereco?.numero, order.endereco?.bairro].filter(Boolean).join(', '))}</p>
+      </details>
+      <p><strong>Total: ${formatCurrency(Number(order.total) || 0)}</strong></p>
+      ${order.status === 'Saiu para entrega' ? `<button class="client-order-confirm-button" type="button" data-confirm-delivery="${escapeAdminValue(order.numero)}">Confirmar que recebi o pedido</button>` : ''}
+      ${order.status === 'Cancelado' ? `<p>Motivo: ${escapeAdminValue(order.motivoCancelamento || 'Não informado')}</p>` : ''}
+    </article>`).join('') || '<p>Você ainda não fez pedidos.</p>';
+    if (list.dataset.markup !== markup) {
+      const expanded = [...list.querySelectorAll('details')].map(detail => detail.open);
+      list.innerHTML = markup;
+      list.querySelectorAll('details').forEach((detail, index) => detail.open = expanded[index] || false);
+      list.querySelectorAll('[data-confirm-delivery]').forEach(button => {
+        button.addEventListener('click', () => openDeliveryConfirmation(button.dataset.confirmDelivery));
+      });
+      list.dataset.markup = markup;
+    }
+  }
+  function openClientOrders() {
+    if (!isCustomerView()) return;
+    closeClientOrders();
+    clientApp.classList.add('hidden');
+    cartButton.classList.add('hidden');
+    document.getElementById('clientOrdersPage').classList.remove('hidden');
+    renderClientOrders();
+    clientOrdersTimer = window.setInterval(renderClientOrders, 5000);
+    document.getElementById('clientOrdersBackButton').focus();
+  }
+  document.getElementById('clientOrdersButton').addEventListener('click', openClientOrders);
+  document.querySelectorAll('[data-google-login]').forEach(button => button.addEventListener('click', () => {
+    continueWithGoogle(button.dataset.googleLogin, button.closest('form') === clientRegisterForm);
+  }));
+  const modeSwitcher = document.getElementById('modeSwitcher');
+  const modeSwitcherButton = document.getElementById('modeSwitcherButton');
+  modeSwitcherButton.addEventListener('click', () => {
+    const expanded = modeSwitcherButton.getAttribute('aria-expanded') === 'true';
+    modeSwitcherButton.setAttribute('aria-expanded', String(!expanded));
+    modeSwitcher.classList.toggle('open', !expanded);
+  });
+  document.querySelectorAll('[data-mode-option]').forEach(button => button.addEventListener('click', async () => {
+    const mode = button.dataset.modeOption;
+    modeSwitcherButton.setAttribute('aria-expanded', 'false');
+    modeSwitcher.classList.remove('open');
+    if (mode === 'admin') {
+      if (currentProfile === 'admin') returnToGeneralAdmin();
+      return;
+    }
+    if (mode === 'client') {
+      if (currentProfile === 'admin') await activateAdminPreview('customer');
+      else switchMasterToClient();
+      return;
+    }
+    if (mode === 'commerce') {
+      if (currentProfile === 'admin') await activateAdminPreview('commerce');
+      else switchMasterToCommerce();
+    }
+  }));
+  document.getElementById('clientOrdersBackButton').addEventListener('click', showClientApp);
+  document.getElementById('clientLogoutButton').addEventListener('click', () => logout());
+  const clientProfileButton = document.getElementById('clientProfileButton');
+  clientProfileButton.addEventListener('click', showClientLogin);
+  document.getElementById('openClientRegisterButton').addEventListener('click', showClientRegister);
+  const commerceProfileButton = document.getElementById('commerceProfileButton');
+  commerceProfileButton.addEventListener('click', showCommerceLogin);
+  document.querySelectorAll('[data-auth-back]').forEach(button => button.addEventListener('click', showProfileSelection));
+  document.querySelectorAll('[data-use-another-account]').forEach(button => button.addEventListener('click', () => {
+    const form = button.closest('form');
+    useAnotherAccount(form.querySelector('input[type="email"]'), form.querySelector('input[type="password"]'), form);
+  }));
+  clientLoginForm.addEventListener('submit', event => { event.preventDefault(); loginClient(); });
+  clientRegisterForm.addEventListener('submit', registerClient);
+  commerceLoginForm.addEventListener('submit', event => { event.preventDefault(); loginCommerce(); });
+  document.querySelectorAll('[data-forgot-password]').forEach(button => button.addEventListener('click', () => showForgotPassword(button.dataset.forgotPassword)));
+  forgotPasswordForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    const message = document.getElementById('forgotPasswordMessage');
+    if (authRequestPending || !forgotPasswordForm.reportValidity()) return;
+    if (!supabaseClient) { message.textContent = supabaseUnavailableMessage; return; }
+    authRequestPending = true;
+    message.textContent = 'Enviando...';
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(normalizeEmail(document.getElementById('forgotPasswordEmail').value), { redirectTo: `${location.origin}/` });
+      message.textContent = error ? 'Não foi possível enviar o link. Confira o e-mail e tente novamente.' : 'Link enviado. Confira seu e-mail para renovar a senha.';
+    } finally { authRequestPending = false; }
+  });
+  updatePasswordForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    const message = document.getElementById('updatePasswordMessage');
+    if (authRequestPending || !updatePasswordForm.reportValidity()) return;
+    const password = document.getElementById('newPassword').value;
+    if (password !== document.getElementById('newPasswordConfirm').value) { message.textContent = 'As senhas devem ser iguais.'; return; }
+    if (!supabaseClient) { message.textContent = supabaseUnavailableMessage; return; }
+    authRequestPending = true;
+    message.textContent = 'Salvando...';
+    try {
+      const { error } = await supabaseClient.auth.updateUser({ password });
+      if (error) { message.textContent = 'Não foi possível renovar a senha. Tente novamente.'; return; }
+      message.textContent = 'Senha renovada. Você já pode entrar novamente.';
+      updatePasswordForm.reset();
+      await supabaseClient.auth.signOut();
+      setTimeout(showProfileSelection, 800);
+    } finally { authRequestPending = false; }
+  });
+  searchInput.addEventListener('input', renderStores);
+  supportCarousel.addEventListener('click', event => {
+    const card = event.target.closest('[data-carousel-card]');
+    if (!card) return;
+    event.preventDefault();
+    const rect = card.getBoundingClientRect();
+    const ratio = event.detail === 0 ? 0.5 : (event.clientX - rect.left) / rect.width;
+    if (ratio < 0.25) moveSupportCarousel(-1);
+    else if (ratio > 0.75) moveSupportCarousel(1);
+    else if (card.dataset.cardAction === 'support') window.open(card.href, '_blank', 'noopener');
+    else storeList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  closeMenuButton.addEventListener('click', closeStoreMenu);
+  cartButton.addEventListener('click', openCart);
+  closeCartButton.addEventListener('click', closeCart);
+  finishOrderButton.addEventListener('click', openCheckout);
+  closeCheckoutButton.addEventListener('click', closeCheckout);
+  backToCartButton.addEventListener('click', returnToCart);
+  backHomeButton.addEventListener('click', () => { closeCheckout(); closeStoreMenu(); });
+  [[menuPanel,closeStoreMenu],[cartPanel,closeCart],[checkoutPanel,closeCheckout],[adminPanel,closeAdminMenu],[adminDetailsModal,closeAdminOrderDetails],[cancelOrderModal,closeCancelOrderConfirmation],[deliveryConfirmModal,closeDeliveryConfirmation]].forEach(([panel,close]) => panel.addEventListener('click',event => { if(event.target === panel) close(); }));
+  checkoutForm.addEventListener('submit', handleCheckoutSubmit);
+  checkoutForm.querySelectorAll('[name="paymentMethod"]').forEach(input => input.addEventListener('change', updateCashChange));
+  cashAmountInput.addEventListener('input', updateCashChange);
+  openAdminButton.addEventListener('click', openAdminPanel);
+  refreshAdminButton.addEventListener('click', () => refreshCommerceOrders());
+  adminMenuButton.addEventListener('click', openAdminMenu);
+  closeAdminButton.addEventListener('click', closeAdminMenu);
+  adminMenuOverlay.addEventListener('click', closeAdminMenu);
+  adminNavigationButtons.forEach(button => button.addEventListener('click', () => setAdminPage(button.dataset.adminPage)));
+  closeAdminDetailsButton.addEventListener('click', closeAdminOrderDetails);
+  closeAdminDetailsFooterButton.addEventListener('click', closeAdminOrderDetails);
+  closeCancelOrderButton.addEventListener('click', closeCancelOrderConfirmation);
+  keepOrderButton.addEventListener('click', closeCancelOrderConfirmation);
+  confirmCancelOrderButton.addEventListener('click', confirmOrderCancellation);
+  confirmDeliveryButton.addEventListener('click', () => {
+    const orderNumber = pendingDeliveryOrderNumber;
+    closeDeliveryConfirmation();
+    if (orderNumber) confirmClientOrderDelivery(orderNumber);
+  });
+  cancelDeliveryButton.addEventListener('click', closeDeliveryConfirmation);
+  document.addEventListener('keydown',event => { if(event.key === 'Escape') closeAdminMenu(); });
+  const paymentDefaults = { pix: true, cash: true, credit: true, debit: true };
+  const commerceDefaults = { notifications: true, autoRefresh: true, refreshInterval: 5, confirmCancellation: true, darkMode: false };
+  let activeOrderFilter = 'new';
+  let knownOrderNumbers = new Set(getSavedOrders().map(order => order.numero));
+  function readCommerceStorage(key, fallback) {
+    try { const value = JSON.parse(localStorage.getItem(key)); return value && typeof value === 'object' && !Array.isArray(value) ? value : fallback; } catch { return fallback; }
+  }
+  function getPaymentSettings() { return { ...paymentDefaults, ...readCommerceStorage('apiacasPaymentSettings', {}) }; }
+  function getCommerceSettings() {
+    const settings = { ...commerceDefaults, ...readCommerceStorage('apiacasCommerceSettings', {}) };
+    settings.refreshInterval = [5, 10, 30, 60].includes(Number(settings.refreshInterval)) ? Number(settings.refreshInterval) : 5;
+    settings.darkMode = settings.darkMode === true || settings.darkMode === 'true';
+    return settings;
+  }
+  function applyAppTheme() {
+    document.documentElement.classList.toggle('dark-mode', getCommerceSettings().darkMode);
+  }
+  function formMessage(form, message, error = false) {
+    const target = form.querySelector('.form-message'); target.textContent = message; target.classList.toggle('error', error);
+  }
+  function fillCommerceForm(form, values) {
+    Object.entries(values).forEach(([key, value]) => { const input = form.elements.namedItem(key); if (input) { if (input.type === 'checkbox') input.checked = value === true; else input.value = value ?? ''; } });
+  }
+  function togglePixFields() {
+    const enabled = document.getElementById('paymentSettingsForm').elements.pix.checked;
+    const fields = document.getElementById('pixFields'); fields.classList.toggle('hidden', !enabled); fields.disabled = !enabled;
+    fields.querySelectorAll('input').forEach(input => input.required = enabled);
+  }
+  function loadCommerceForms() {
+    const commerce = getLoggedCommerce();
+    if (!commerce) {
+      showStatus('Não foi possível localizar os dados do comércio.');
+      return;
+    }
+    const commerceData = { name: commerce.name, responsible: commerce.owner, document: commerce.document, address: commerce.address?.street, number: commerce.address?.number, neighborhood: commerce.address?.neighborhood, phone: commerce.phone, email: commerce.email, hours: commerce.hours || [commerce.businessHours?.opening, commerce.businessHours?.closing].join(' - '), accountStatus: commerce.status, isOpen: commerce.isOpen };
+    document.getElementById('commerceAccountStatus').textContent = commerceData.accountStatus === 'inactive' ? 'Inativa' : 'Ativa';
+    document.querySelectorAll('[data-commerce-registration]').forEach(field => {
+      field.textContent = commerceData[field.dataset.commerceRegistration] || 'Não informado';
+    });
+    fillCommerceForm(document.getElementById('commerceDataForm'), commerceData);
+    fillCommerceForm(document.getElementById('paymentSettingsForm'), getPaymentSettings());
+    fillCommerceForm(document.getElementById('commerceSettingsForm'), getCommerceSettings());
+    togglePixFields();
+  }
+  function syncCheckoutPayments() {
+    const settings = getPaymentSettings(); let available = false;
+    checkoutForm.querySelectorAll('[name="paymentMethod"]').forEach(input => {
+      const enabled = settings[input.value] === true; available ||= enabled;
+      input.disabled = !enabled; input.required = enabled; input.closest('label').classList.toggle('hidden', !enabled);
+      if (!enabled) input.checked = false;
+    });
+    confirmOrderButton.disabled = !available || isSubmittingOrder;
+    document.getElementById('paymentAvailabilityMessage').textContent = available ? '' : 'Nenhuma forma de pagamento disponível no momento.';
+    document.getElementById('paymentAvailabilityMessage').classList.toggle('error', !available);
+    updateCashChange();
+  }
+  function refreshCommerceOrders() {
+    const orders = getAdminOrders();
+    if (getCommerceSettings().notifications && orders.some(order => !knownOrderNumbers.has(order.numero) && (order.status || 'Novo') === 'Novo')) showStatus('Novo pedido recebido!');
+    knownOrderNumbers = new Set(orders.map(order => order.numero));
+    renderAdminOrders();
+  }
+  function configureAdminRefresh() {
+    if (adminRefreshTimer !== null) window.clearInterval(adminRefreshTimer);
+    adminRefreshTimer = null;
+    const settings = getCommerceSettings();
+    if (settings.autoRefresh && !adminPanel.classList.contains('hidden')) adminRefreshTimer = window.setInterval(refreshCommerceOrders, Math.max(5, Math.min(300, Number(settings.refreshInterval) || 5)) * 1000);
+  }
+  document.querySelectorAll('[data-order-filter]').forEach(button => button.addEventListener('click', () => {
+    activeOrderFilter = button.dataset.orderFilter;
+    document.querySelectorAll('[data-order-filter]').forEach(item => { item.classList.toggle('active', item === button); item.setAttribute('aria-pressed', String(item === button)); });
+    renderAdminOrders();
+  }));
+  document.getElementById('paymentSettingsForm').elements.pix.addEventListener('change', togglePixFields);
+  const intervalInput = document.getElementById('commerceSettingsForm').elements.refreshInterval;
+  intervalInput.required = true;
+  document.getElementById('commerceSettingsForm').elements.darkMode.addEventListener('change', (event) => {
+    document.documentElement.classList.toggle('dark-mode', event.target.checked);
+  });
+  [['commerceDataForm','apiacasCommerceData'], ['paymentSettingsForm','apiacasPaymentSettings'], ['commerceSettingsForm','apiacasCommerceSettings']].forEach(([id, key]) => {
+    const form = document.getElementById(id);
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!isCommerceSession()) return;
+      const values = { ...readCommerceStorage(key, {}) };
+      const editableCommerceFields = ['phone', 'email', 'hours', 'isOpen'];
+      Array.from(form.elements).filter(input => input.name && (id !== 'commerceDataForm' || editableCommerceFields.includes(input.name))).forEach(input => values[input.name] = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value.trim());
+      if (id === 'paymentSettingsForm' && values.pix && (!values.pixKey || !values.pixHolder)) { formMessage(form, 'Preencha os campos obrigatórios.', true); return; }
+      if (id === 'commerceSettingsForm') {
+        values.refreshInterval = Number(values.refreshInterval);
+        if (![5, 10, 30, 60].includes(values.refreshInterval)) { formMessage(form, 'Selecione um intervalo válido.', true); return; }
+      }
+      try {
+        if (id === 'commerceDataForm') await updateLoggedCommerce({ phone: values.phone, email: normalizeEmail(values.email), hours: values.hours, isOpen: values.isOpen });
+        else localStorage.setItem(key, JSON.stringify(values));
+        if (id === 'commerceDataForm') { renderStoreControls(); renderStores(); loadCommerceForms(); }
+        if (id === 'paymentSettingsForm') syncCheckoutPayments();
+        if (id === 'commerceSettingsForm') { configureAdminRefresh(); applyAppTheme(); }
+        formMessage(form, 'Alterações salvas com sucesso.');
+      } catch (error) {
+        if (id === 'commerceDataForm') renderStoreControls();
+        formMessage(form, error.message === 'Informe o horário como 18:00 - 23:00.' ? error.message : 'Não foi possível salvar todas as alterações. Tente novamente.', true);
+      }
+    });
+  });
+  storeOpenToggle.addEventListener('change', async () => {
+    const previous = isStoreOpen();
+    const requested = storeOpenToggle.checked;
+    storeOpenToggle.disabled = true;
+    try {
+      await saveStoreOpenState(requested);
+      renderStoreControls(); renderStores();
+    } catch (failure) {
+      console.error('Falha ao abrir/fechar comércio:', failure.code || failure.name);
+      storeOpenToggle.checked = previous;
+      renderStoreControls();
+      showStatus('Não foi possível alterar o funcionamento da loja. Tente novamente.');
+    } finally { storeOpenToggle.disabled = false; }
+  });
+  window.addEventListener('storage', event => {
+    if (event.key === ORDERS_STORAGE_KEY && !document.getElementById('clientOrdersPage').classList.contains('hidden')) renderClientOrders();
+    if (event.key === 'apiacasPaymentSettings') syncCheckoutPayments();
+    if (event.key === 'apiacasCommerceSettings') { configureAdminRefresh(); applyAppTheme(); }
+    if (event.key === ORDERS_STORAGE_KEY && !adminPanel.classList.contains('hidden') && getCommerceSettings().autoRefresh) refreshCommerceOrders();
+  });
+  const PRODUCTS_STORAGE_KEY = 'apiacasCommerceProducts';
+  let editingProduct = null;
+  const productEditor = document.getElementById('productEditor');
+  productEditor.elements.storeId.value = stores[0]?.id || '';
+  function loadCommerceProducts() {
+    const commerces = readStorage(COMMERCES_KEY, []), products = readStorage(PRODUCTS_KEY, []);
+    if (localStorage.getItem(COMMERCES_KEY) === null || localStorage.getItem(PRODUCTS_KEY) === null) return;
+    stores.splice(0, stores.length, ...commerces.map(commerce => ({ ...commerce, icon: 'A', rating: commerce.rating || 'Novo', time: commerce.hours || [commerce.businessHours?.opening, commerce.businessHours?.closing].filter(Boolean).join(' - '), delivery: typeof commerce.delivery === 'number' ? (commerce.delivery > 0 ? formatCurrency(commerce.delivery) : 'Entrega grátis') : commerce.delivery || 'Entrega grátis', products: products.filter(product => String(product.commerceId) === String(commerce.id)) })));
+    commerces.forEach(commerce => { if (!categories.includes(commerce.category)) categories.push(commerce.category); });
+  }
+  function resetProductEditor() {
+    editingProduct = null;
+    productEditor.reset();
+    productEditor.classList.add('hidden');
+    productEditor.elements.imageFile.required = true;
+    productEditor.elements.storeId.value = currentCommerceId || '1';
+    productEditor.elements.storeId.disabled = false;
+    document.getElementById('productEditorTitle').textContent = 'Adicionar produto';
+    document.getElementById('saveProductButton').textContent = 'Novo produto';
+    const action = document.getElementById('cancelProductEdit');
+    action.textContent = 'Excluir produto';
+    action.classList.add('hidden');
+  }
+  function openNewProductEditor() {
+    resetProductEditor();
+    productEditor.classList.remove('hidden');
+    productEditor.elements.name.focus();
+  }
+  function editCommerceProduct(storeId, index) {
+    if (!isCommerceSession() || String(storeId) !== String(currentCommerceId)) return;
+    const product = stores.find(store => String(store.id) === String(storeId))?.products[index];
+    if (!product) return;
+    editingProduct = { storeId, index, id: product.id };
+    productEditor.classList.remove('hidden');
+    productEditor.elements.imageFile.value = '';
+    productEditor.elements.imageFile.required = false;
+    fillCommerceForm(productEditor, { ...product, storeId });
+    productEditor.elements.storeId.disabled = true;
+    document.getElementById('productEditorTitle').textContent = 'Editar produto';
+    document.getElementById('saveProductButton').textContent = 'Salvar produto';
+    const action = document.getElementById('cancelProductEdit');
+    action.textContent = 'Excluir produto';
+    action.classList.remove('hidden');
+    formMessage(productEditor, '');
+    productEditor.elements.name.focus();
+  }
+  document.getElementById('cancelProductButton').addEventListener('click', () => {
+    resetProductEditor();
+    formMessage(productEditor, '');
+    document.getElementById('openProductFormButton').focus();
+  });
+  document.getElementById('cancelProductEdit').addEventListener('click', () => {
+    if (!isCommerceSession()) return;
+    if (!editingProduct) { resetProductEditor(); formMessage(productEditor, ''); return; }
+    if (String(editingProduct.storeId) !== String(currentCommerceId)) return;
+    const store = getCurrentCommerceStore();
+    const product = store?.products[editingProduct.index];
+    if (!product || String(product.id) !== String(editingProduct.id)) { formMessage(productEditor, 'Produto não encontrado. Abra a edição novamente.', true); return; }
+    if (!window.confirm(`Excluir o produto "${product.name}"?`)) return;
+    const updated = store.products.filter((item, index) => index !== editingProduct.index);
+    try {
+      persistCommerceProducts(store.id, updated);
+      store.products = updated;
+      resetProductEditor();
+      renderProductControls();
+      renderStores();
+    } catch { formMessage(productEditor, 'Não foi possível excluir o produto. Tente novamente.', true); }
+  });
+  productEditor.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!isCommerceSession()) return;
+    const store = getCurrentCommerceStore();
+    if (!store || (editingProduct && (String(editingProduct.storeId) !== String(store.id) || String(store.products[editingProduct.index]?.id) !== String(editingProduct.id)))) { formMessage(productEditor, 'Abra a edição do produto novamente.', true); return; }
+    const preparationTimeText = productEditor.elements.preparationTime.value.trim();
+    const product = { type: productEditor.elements.type.value, category: productEditor.elements.category.value.trim(), preparationTime: preparationTimeText === '' ? null : Number(preparationTimeText), available: editingProduct ? store?.products[editingProduct.index]?.available !== false : true, name: productEditor.elements.name.value.trim(), description: productEditor.elements.description.value.trim(), price: parseMoneyValue(productEditor.elements.price.value), image: editingProduct ? store?.products[editingProduct.index]?.image || '' : '' };
+    if (!store || !product.name || !product.category || !product.description || !Number.isFinite(product.price) || product.price <= 0 || (product.preparationTime !== null && (!Number.isInteger(product.preparationTime) || product.preparationTime < 0))) { formMessage(productEditor, 'Preencha nome, categoria, valor e descrição. O tempo de preparo é opcional.', true); return; }
+    const index = editingProduct?.index ?? -1;
+    if (store.products.some((item, i) => i !== index && item.name.toLowerCase() === product.name.toLowerCase())) { formMessage(productEditor, 'Já existe um produto com esse nome neste comércio.', true); return; }
+    const file = productEditor.elements.imageFile.files[0];
+    if (!editingProduct && !file) { formMessage(productEditor, 'A imagem do produto é obrigatória.', true); return; }
+    if (file && (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024)) {
+      formMessage(productEditor, 'Escolha uma imagem JPG, PNG ou WebP de até 2 MB.', true); return;
+    }
+    const controls = Array.from(productEditor.elements);
+    const disabledStates = controls.map(control => control.disabled);
+    controls.forEach(control => control.disabled = true);
+    if (file) {
+      try {
+        product.image = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error('Falha ao ler imagem'));
+          reader.onabort = () => reject(new Error('Leitura interrompida'));
+          reader.readAsDataURL(file);
+        });
+      } catch {
+        controls.forEach((control, i) => control.disabled = disabledStates[i]);
+        formMessage(productEditor, 'Não foi possível ler a imagem. Selecione outro arquivo.', true); return;
+      }
+    }
+    controls.forEach((control, i) => control.disabled = disabledStates[i]);
+    if (!isCommerceSession() || String(store.id) !== String(currentCommerceId)) return;
+    if (!product.image) product.image = store.products[0]?.image || '';
+    const updated = store.products.slice();
+    const original = updated[index];
+    if (index >= 0) updated[index] = { ...original, ...product }; else updated.push(product);
+    try {
+      persistCommerceProducts(store.id, updated);
+      store.products = updated;
+      resetProductEditor(); renderProductControls(); renderStores();
+      showStatus('Produto salvo com sucesso.');
+    } catch { formMessage(productEditor, 'Não foi possível salvar todas as alterações. Tente novamente.', true); }
+  });
+  function getSalesReport(period) {
+    const start = new Date(); start.setHours(0, 0, 0, 0);
+    if (period !== 'all') start.setDate(start.getDate() - Number(period) + 1);
+    const groups = new Map();
+    const orders = getSavedOrders().filter(order => {
+      if (String((order.commerceId || '1')) !== String(currentCommerceId)) return false;
+      const date = new Date(order.data);
+      return order.status === 'Entregue' && Number.isFinite(date.getTime()) && date <= new Date() && (period === 'all' || date >= start);
+    });
+    let total = 0, units = 0;
+    orders.forEach(order => {
+      const amount = Math.max(0, Number(order.subtotal ?? (Number(order.total) - Number(order.taxaEntrega || 0))) || 0);
+      const date = new Date(order.data);
+      const key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+      groups.set(key, (groups.get(key) || 0) + amount); total += amount;
+      units += (order.itens || []).reduce((sum, item) => sum + (Number(item.quantidade) || 0), 0);
+    });
+    return { total, units, count: orders.length, groups: [...groups.entries()].sort(([a],[b]) => a.localeCompare(b)) };
+  }
+  function renderSalesReport() {
+    if (!isCommerceSession()) return;
+    const report = getSalesReport(document.getElementById('reportPeriod').value);
+    document.getElementById('salesMetrics').innerHTML = [['Vendido', formatCurrency(report.total)], ['Pedidos entregues', report.count], ['Itens vendidos', report.units], ['Ticket médio', formatCurrency(report.count ? report.total / report.count : 0)]].map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join('');
+    const max = Math.max(1, ...report.groups.map(([,value]) => value));
+    document.getElementById('salesChart').innerHTML = report.groups.map(([day,value]) => `<div class="sales-chart-row"><span>${day.split('-').reverse().join('/')}</span><div class="sales-chart-track" aria-hidden="true"><div style="width:${value/max*100}%"></div></div><strong>${formatCurrency(value)}</strong></div>`).join('') || '<p>Nenhuma venda concluída neste período.</p>';
+  }
+  document.getElementById('reportPeriod').addEventListener('change', renderSalesReport);
+  window.addEventListener('storage', event => {
+    if ([PRODUCTS_STORAGE_KEY, PRODUCTS_KEY, COMMERCES_KEY].includes(event.key)) {
+      loadCommerceProducts(); renderStores();
+      if (isCommerceSession()) renderProductControls();
+      if (!menuPanel.classList.contains('hidden')) openStoreMenu(menuPanel.dataset.storeId);
+    }
+  });
+  document.getElementById('commerceRegisterForm').addEventListener('submit', registerCommerce);
+  const commerceRegisterGoogleButton = document.createElement('button');
+  commerceRegisterGoogleButton.type = 'button';
+  commerceRegisterGoogleButton.className = 'google-login-button';
+  commerceRegisterGoogleButton.dataset.googleLogin = 'commerce';
+  commerceRegisterGoogleButton.textContent = 'Continuar com Google';
+  document.getElementById('commerceRegisterForm').insertBefore(commerceRegisterGoogleButton, document.getElementById('cancelCommerceRegisterButton'));
+  commerceRegisterGoogleButton.addEventListener('click', () => continueWithGoogle('commerce', true));
+  ['Opening', 'Closing'].forEach(name => {
+    document.getElementById(`registerCommerce${name}`).addEventListener('blur', event => {
+      const normalized = normalizeBusinessTime(event.target.value);
+      if (normalized) event.target.value = normalized;
+    });
+  });
+  document.getElementById('openCommerceRegisterButton').addEventListener('click', () => {
+    hideAuthViews(); document.getElementById('commerceRegisterForm').classList.remove('hidden');
+    document.getElementById('registerCommerceName').focus();
+  });
+  document.getElementById('cancelCommerceRegisterButton').addEventListener('click', showCommerceLogin);
+  document.getElementById('commerceProductSearch').addEventListener('input', renderProductControls);
+  document.getElementById('commerceProductCategoryFilter').addEventListener('change', renderProductControls);
+  document.getElementById('openProductFormButton').addEventListener('click', openNewProductEditor);
+  function migrateCommerceCatalog() {
+    // Import the existing demonstration catalog once; retain all legacy keys.
+    const legacy = readCommerceStorage('apiacasCommerceData', {});
+    if (localStorage.getItem(COMMERCES_KEY) === null) writeStorage(COMMERCES_KEY, stores.map((store, index) => ({ id: String(store.id), name: index === 0 ? legacy.name || store.name : store.name, owner: index === 0 ? legacy.responsible || '' : '', document: index === 0 ? legacy.document || '' : '', phone: index === 0 ? legacy.phone || '' : '', email: index === 0 ? 'comercio@teste.com' : '', password: null, category: store.category, address: { street: index === 0 ? legacy.address || '' : '', number: index === 0 ? legacy.number || '' : '', neighborhood: index === 0 ? legacy.neighborhood || '' : '', complement: '' }, businessHours: { opening: '', closing: '' }, hours: index === 0 ? legacy.hours || store.time : store.time, status: index === 0 ? legacy.accountStatus || 'active' : 'active', isOpen: index === 0 ? legacy.isOpen ?? getStoreSettings().isOpen ?? true : true, delivery: store.delivery, rating: store.rating })));
+    if (localStorage.getItem(PRODUCTS_KEY) === null) {
+      const saved = readCommerceStorage(PRODUCTS_STORAGE_KEY, {}), availability = getProductAvailability();
+      writeStorage(PRODUCTS_KEY, stores.flatMap(store => (saved[store.id] || store.products).map(product => ({ ...product, id: createId('product'), commerceId: String(store.id), category: product.category || store.category, type: product.type || 'product', preparationTime: product.preparationTime || 0, available: product.available !== false && availability[getProductKey(store.id, product.name)] !== false }))));
+    }
+  }
+  // Administração geral: autorização sempre consultada no banco; dados não são cacheados.
+  let generalPage = 'dashboard', generalOffset = 0, generalRequest = 0, generalCommerceId = null;
+  const generalPanel = document.getElementById('generalAdminPanel');
+  const ADMIN_PREVIEW_KEY = 'apiacasAdminPreview';
+  const generalMessage = document.getElementById('generalAdminMessage');
+  const generalList = document.getElementById('generalAdminList');
+  const generalDetails = document.getElementById('generalAdminDetails');
+  const generalForm = document.getElementById('generalAdminCommerceForm');
+  const generalFields = [
+    ['name','Nome'], ['responsible_name','Responsável'], ['responsible_cpf','CPF do responsável'], ['company_cnpj','CNPJ da empresa'],
+    ['phone','Telefone'], ['email','E-mail'], ['category','Categoria'], ['street','Endereço'],
+    ['number','Número'], ['neighborhood','Bairro'], ['complement','Complemento'],
+    ['opening_time','Abertura'], ['closing_time','Fechamento'], ['delivery_fee','Taxa de entrega']
+  ];
+  function saveAdminPreview() {
+    if (!adminPreviewMode) localStorage.removeItem(ADMIN_PREVIEW_KEY);
+    else localStorage.setItem(ADMIN_PREVIEW_KEY, JSON.stringify({ mode: adminPreviewMode, commerceId: adminPreviewCommerceId }));
+  }
+  async function loadAdminPreviewCommerces() {
+    const localCommerces = readStorage(COMMERCES_KEY, []);
+    let commerces = localCommerces;
+    if (supabaseClient) {
+      const result = await supabaseClient.from('commerces').select('*').order('name');
+      if (!result.error && result.data?.length) {
+        result.data.forEach(cacheCommerce);
+        commerces = readStorage(COMMERCES_KEY, []);
+      }
+    }
+    return commerces;
+  }
+  async function activateAdminPreview(mode, commerceId = null) {
+    if (!currentUser || !adminSession) return;
+    adminPreviewMode = mode || null;
+    if (mode === 'commerce' && !commerceId) {
+      const commerces = await loadAdminPreviewCommerces();
+      commerceId = commerces[0]?.id || null;
+    }
+    adminPreviewCommerceId = mode === 'commerce' ? commerceId : null;
+    currentCommerceId = adminPreviewCommerceId;
+    masterMode = false;
+    saveAdminPreview();
+    generalPanel.classList.add('hidden');
+    if (adminPreviewMode === 'customer') showClientApp();
+    if (adminPreviewMode === 'commerce') showCommercePanel('admin');
+    updateModeSwitcherVisibility();
+  }
+  async function restoreAdminPreview() {
+    try {
+      const preview = JSON.parse(localStorage.getItem(ADMIN_PREVIEW_KEY) || 'null');
+      if (!preview?.mode) return;
+      await activateAdminPreview(preview.mode, preview.commerceId);
+    } catch { localStorage.removeItem(ADMIN_PREVIEW_KEY); }
+  }
+  function returnToGeneralAdmin() {
+    adminPreviewMode = null;
+    adminPreviewCommerceId = null;
+    currentCommerceId = null;
+    masterMode = false;
+    saveAdminPreview();
+    updateModeSwitcherVisibility();
+    document.querySelectorAll('[data-mode-option]').forEach(button => {
+      button.classList.toggle('active', button.dataset.modeOption === 'admin');
+      button.disabled = false;
+    });
+    [clientApp, adminPanel, menuPanel, cartPanel, checkoutPanel, cartButton].forEach(panel => panel.classList.add('hidden'));
+    generalPanel.classList.remove('hidden');
+    renderGeneralAdmin();
+  }
+  function clearGeneralAdmin() {
+    generalRequest++;
+    generalCommerceId = null;
+    generalPanel.classList.add('hidden');
+    generalList.innerHTML = '';
+    document.getElementById('generalAdminDashboard').innerHTML = '';
+    document.getElementById('generalAdminProfileDetails').innerHTML = '';
+    document.getElementById('generalAdminCommerceFields').innerHTML = '';
+    generalDetails.classList.add('hidden');
+    generalForm.classList.add('hidden');
+    document.getElementById('generalAdminPassword').value = '';
+  }
+  async function requireGeneralAdmin() {
+    if (!supabaseClient) throw new Error(supabaseUnavailableMessage);
+    const sessionResult = await supabaseClient.auth.getSession();
+    const user = sessionResult.data?.session?.user;
+    if (sessionResult.error) throw sessionResult.error;
+    const result = user ? await supabaseClient.rpc('is_admin') : { data: false };
+    if (result.error || result.data !== true || user.id !== currentUser?.id) {
+      clearGeneralAdmin();
+      if (currentProfile === 'admin') {
+        currentProfile = null;
+        adminSession = false;
+        authScreen.classList.remove('hidden');
+        showProfileSelection();
+      }
+      throw result.error || new Error('Acesso administrativo não autorizado.');
+    }
+    return user;
+  }
+  async function routeGeneralAdmin() {
+    try {
+      const result = await supabaseClient.rpc('is_admin');
+      if (result.error) { console.error('Não foi possível verificar administrador:', result.error.code); return false; }
+      if (result.data !== true) return false;
+      await requireGeneralAdmin();
+      currentProfile = 'admin'; adminSession = true; masterMode = false; currentCommerceId = null;
+      closeClientOrders(); closeAdminMenu(); stopCustomerOrderTracking();
+      if (adminRefreshTimer !== null) { window.clearInterval(adminRefreshTimer); adminRefreshTimer = null; }
+      [authScreen, clientApp, adminPanel, menuPanel, cartPanel, checkoutPanel, cartButton].forEach(panel => panel.classList.add('hidden'));
+      generalPanel.classList.remove('hidden');
+      updateModeSwitcherVisibility();
+      document.querySelectorAll('[data-mode-option]').forEach(button => {
+        button.classList.toggle('active', button.dataset.modeOption === 'admin');
+        button.disabled = false;
+      });
+      document.getElementById('generalAdminPassword').value = '';
+      generalPage = 'dashboard'; generalOffset = 0;
+      await renderGeneralAdmin();
+      await restoreAdminPreview();
+      return true;
+    } catch (error) { console.error('Falha ao abrir administrador:', error.code || error.message); return false; }
+  }
+  function generalError(error) {
+    console.error('Falha na administração geral:', error.code || error.message);
+    generalMessage.textContent = 'Não foi possível carregar ou salvar. Confira sua permissão e se o SQL administrativo foi aplicado.';
+    generalMessage.classList.add('error');
+  }
+  async function renderGeneralAdmin() {
+    const request = ++generalRequest;
+    generalMessage.textContent = 'Carregando...'; generalMessage.classList.remove('error');
+    generalDetails.classList.add('hidden'); generalCommerceId = null;
+    generalList.innerHTML = '';
+    document.getElementById('generalAdminDashboard').innerHTML = '';
+    try {
+      await requireGeneralAdmin();
+      document.querySelectorAll('[data-general-page]').forEach(button => {
+        button.classList.toggle('active', button.dataset.generalPage === generalPage);
+        button.setAttribute('aria-pressed', String(button.dataset.generalPage === generalPage));
+      });
+      document.getElementById('generalAdminDashboard').classList.toggle('hidden', generalPage !== 'dashboard');
+      document.getElementById('generalAdminDirectory').classList.toggle('hidden', generalPage === 'dashboard');
+      if (generalPage === 'dashboard') {
+        const results = await Promise.all([
+          supabaseClient.from('profiles').select('id', { count: 'exact', head: true }),
+          supabaseClient.from('commerces').select('id', { count: 'exact', head: true }),
+          supabaseClient.from('commerces').select('id', { count: 'exact', head: true }).eq('status','active'),
+          supabaseClient.from('commerces').select('id', { count: 'exact', head: true }).eq('status','inactive')
+        ]);
+        const failure = results.find(result => result.error); if (failure) throw failure.error;
+        if (request !== generalRequest) return;
+        document.getElementById('generalAdminDashboard').innerHTML = results.map((result,i) => `<div><span>${['Usuários','Comércios','Ativos','Inativos'][i]}</span><strong>${result.count ?? 0}</strong></div>`).join('');
+      } else {
+        const table = generalPage === 'commerces' ? 'commerces' : 'profiles';
+        let query = supabaseClient.from(table).select(table === 'commerces' ? 'id,name,email,status' : 'id,name,email', { count: 'exact' });
+        const search = document.getElementById('generalAdminSearch').value.trim();
+        if (search) {
+          if (table === 'profiles' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(search)) query = query.eq('id', search);
+          else query = query.ilike(table === 'profiles' && search.includes('@') ? 'email' : 'name', '%' + search.replace(/[\\%_]/g, '\\$&') + '%');
+        }
+        const result = await query.order('name').order('id').range(generalOffset, generalOffset + 49);
+        if (result.error) throw result.error;
+        if (request !== generalRequest) return;
+        generalList.innerHTML = (result.data || []).map(item => `<article class="client-order-card"><strong>${escapeAdminValue(item.name || item.email || item.id)}</strong><p>${escapeAdminValue(item.email || '')}${item.status ? ' · ' + escapeAdminValue(item.status) : ''}</p><button class="checkout-back-button" type="button" data-general-open="${escapeAdminValue(item.id)}">${table === 'commerces' ? 'Ver comércio' : 'Abrir perfil'}</button></article>`).join('') || '<p>Nenhum cadastro encontrado.</p>';
+        document.getElementById('generalAdminPrevious').disabled = generalOffset === 0;
+        document.getElementById('generalAdminNext').disabled = generalOffset + 50 >= (result.count || 0);
+        document.getElementById('generalAdminPageNumber').textContent = `Página ${generalOffset / 50 + 1} · ${result.count || 0} cadastros`;
+      }
+      if (request === generalRequest) generalMessage.textContent = '';
+    } catch (error) { if (request === generalRequest) generalError(error); }
+  }
+  async function openGeneralProfile(id) {
+    const request = ++generalRequest;
+    generalDetails.classList.add('hidden'); generalCommerceId = null;
+    const table = generalPage === 'commerces' ? 'commerces' : 'profiles';
+    try {
+      await requireGeneralAdmin();
+      const result = await supabaseClient.from(table).select('*').eq('id',id).single();
+      if (result.error) throw result.error;
+      if (request !== generalRequest) return;
+      const item = result.data;
+      document.getElementById('generalAdminProfileDetails').innerHTML = `<h2>${escapeAdminValue(item.name || item.email || 'Perfil')}</h2><p>UUID: ${escapeAdminValue(item.id)}</p>`;
+      generalForm.classList.toggle('hidden', table !== 'commerces');
+      if (table === 'commerces') {
+        generalCommerceId = item.id;
+        document.getElementById('generalAdminCommerceFields').innerHTML = generalFields.map(([name,label]) => {
+          const type = name.endsWith('_time') ? 'time' : name === 'delivery_fee' ? 'number' : name === 'email' ? 'email' : 'text';
+          return `<label class="commerce-field">${label}<input name="${name}" type="${type}" ${type === 'email' ? 'maxlength="254" autocomplete="email"' : ''} ${type === 'number' ? 'min="0" step="0.01"' : ''} ${name === 'complement' ? '' : 'required'} value="${escapeAdminValue(item[name] ?? '')}" /></label>`;
+        }).join('') + `<label class="commerce-field">Status<select name="status"><option value="pendente_aprovacao" ${item.status === 'pendente_aprovacao' ? 'selected' : ''}>Pendente de aprovação</option><option value="active" ${item.status === 'active' ? 'selected' : ''}>Ativo</option><option value="inactive" ${item.status === 'inactive' ? 'selected' : ''}>Inativo</option></select></label><label class="commerce-toggle">Aberto<input name="is_open" type="checkbox" ${item.is_open ? 'checked' : ''} /></label>`;
+        document.getElementById('generalAdminProfileDetails').innerHTML += `<p>Proprietário: ${escapeAdminValue(item.owner_id)}</p>`;
+      } else {
+        document.getElementById('generalAdminProfileDetails').innerHTML += `<dl class="commerce-registration">${[['name','Nome'],['phone','Telefone'],['email','E-mail'],['created_at','Cadastro']].map(([key,label]) => `<div><dt>${label}</dt><dd>${escapeAdminValue(item[key] || 'Não informado')}</dd></div>`).join('')}</dl>`;
+      }
+      generalDetails.classList.remove('hidden'); generalDetails.scrollIntoView({ block: 'start' });
+    } catch (error) { if (request === generalRequest) generalError(error); }
+  }
+  generalForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!generalCommerceId || !generalForm.reportValidity() || generalForm.dataset.saving === 'true') return;
+    const id = generalCommerceId, request = generalRequest;
+    const values = Object.fromEntries(generalFields.map(([name]) => [name,generalForm.elements.namedItem(name).value.trim()]));
+    values.delivery_fee = Number(values.delivery_fee);
+    values.status = generalForm.elements.namedItem('status').value;
+    values.is_open = generalForm.elements.namedItem('is_open').checked;
+    if (!Number.isFinite(values.delivery_fee) || values.delivery_fee < 0) return;
+    generalForm.dataset.saving = 'true';
+    const saveButton = generalForm.querySelector('button[type="submit"]'); saveButton.disabled = true;
+    try {
+      await requireGeneralAdmin();
+      const result = await supabaseClient.from('commerces').update(values).eq('id',id).select('*').single();
+      if (result.error) throw result.error;
+      if (request !== generalRequest) return;
+      await renderGeneralAdmin(); await openGeneralProfile(id);
+      generalMessage.textContent = 'Comércio atualizado com sucesso.';
+    } catch (error) { if (request === generalRequest) generalError(error); }
+    finally { delete generalForm.dataset.saving; saveButton.disabled = false; }
+  });
+  document.getElementById('generalAdminProfileButton').addEventListener('click', () => {
+    const form = document.getElementById('generalAdminLoginForm');
+    hideAuthViews(); form.classList.remove('hidden');
+    loadRememberedEmail(document.getElementById('generalAdminEmail'), document.getElementById('generalAdminPassword'), form);
+    document.getElementById('generalAdminLoginError').textContent = ''; document.getElementById('generalAdminEmail').focus();
+  });
+  document.getElementById('generalAdminLoginForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    if (authRequestPending) return;
+    const message = document.getElementById('generalAdminLoginError');
+    if (!supabaseClient) { message.textContent = supabaseUnavailableMessage; return; }
+    authRequestPending = true;
+    message.textContent = 'Entrando...';
+    try {
+      const result = await supabaseClient.auth.signInWithPassword({ email: normalizeEmail(document.getElementById('generalAdminEmail').value), password: document.getElementById('generalAdminPassword').value });
+      if (result.error || !result.data.user) throw result.error || new Error('Login indisponível');
+      await askRememberUser(normalizeEmail(document.getElementById('generalAdminEmail').value));
+      currentUser = result.data.user;
+      if (!await routeGeneralAdmin()) { message.textContent = 'Acesso administrativo não autorizado ou indisponível. Entre pelo perfil de cliente ou comércio.'; return; }
+      message.textContent = '';
+    } catch (error) { console.error('Falha no login administrativo:', error.code || error.message); message.textContent = 'Não foi possível entrar. Confira os dados e a confirmação do e-mail.'; }
+    finally { authRequestPending = false; }
+  });
+  document.querySelectorAll('[data-general-page]').forEach(button => button.addEventListener('click', () => {
+    generalPage = button.dataset.generalPage; generalOffset = 0;
+    const search = document.getElementById('generalAdminSearch'); search.value = '';
+    search.placeholder = generalPage === 'profiles' ? 'Nome, e-mail ou UUID' : 'Pesquisar por nome';
+    search.setAttribute('aria-label', search.placeholder);
+    renderGeneralAdmin();
+  }));
+  document.getElementById('generalAdminSearchForm').addEventListener('submit', event => { event.preventDefault(); generalOffset = 0; renderGeneralAdmin(); });
+  generalList.addEventListener('click', event => { const button = event.target.closest('[data-general-open]'); if (button) openGeneralProfile(button.dataset.generalOpen); });
+  document.getElementById('generalAdminPrevious').addEventListener('click', () => { generalOffset = Math.max(0,generalOffset - 50); renderGeneralAdmin(); });
+  document.getElementById('generalAdminNext').addEventListener('click', () => { generalOffset += 50; renderGeneralAdmin(); });
+  document.getElementById('generalAdminCloseDetails').addEventListener('click', () => { generalRequest++; generalCommerceId = null; generalDetails.classList.add('hidden'); });
+  document.getElementById('generalAdminLogout').addEventListener('click', logout);
+  if (supabaseClient?.auth.onAuthStateChange) supabaseClient.auth.onAuthStateChange(event => {
+    if (event === 'PASSWORD_RECOVERY') {
+      showResetPasswordScreen();
+      return;
+    }
+    if (event === 'SIGNED_OUT') {
+      const wasAdmin = currentProfile === 'admin'; clearGeneralAdmin();
+      if (wasAdmin) { currentProfile = null; currentUser = null; authScreen.classList.remove('hidden'); showProfileSelection(); }
+    }
+  });
+  try { migrateCommerceCatalog(); } catch { showStatus('Não foi possível carregar o cadastro local. Verifique o armazenamento do navegador.'); }
+  loadCommerceProducts();
+  applyAppTheme();
+  closeAdminMenu();
+  renderCategories();
+  renderStores();
+  renderCart();
+  function moveSupportCarousel(direction) {
+    const firstCard = supportCarousel.children[0];
+    const width = firstCard.getBoundingClientRect().width + 14;
+    const maxPosition = supportCarousel.scrollWidth - supportCarousel.clientWidth;
+    const nextPosition = supportCarousel.scrollLeft + direction * width;
+    supportCarousel.scrollTo({ left: nextPosition < 0 ? maxPosition : nextPosition > maxPosition ? 0 : nextPosition, behavior: 'smooth' });
+  }
+  setInterval(() => {
+    if (clientApp.classList.contains('hidden')) return;
+    moveSupportCarousel(1);
+  }, 10000);
+  if (isPasswordRecoveryRedirect()) showResetPasswordScreen();
+  else restoreSession();
+  document.querySelectorAll('[data-password-target]').forEach(button => {
+    button.addEventListener('click', () => {
+      const input = document.getElementById(button.dataset.passwordTarget);
+      if (!input) return;
+      const mostrar = input.type === 'password';
+      input.type = mostrar ? 'text' : 'password';
+      button.textContent = mostrar ? 'Ocultar' : 'Mostrar';
+    });
+  });

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NOME DO APLICATIVO</title>
+    <link rel="icon" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <section id="authScreen" class="auth-screen">
+      <div class="auth-layout">
+        <aside class="auth-showcase" aria-label="NOME DO APLICATIVO">
+          <div class="auth-showcase-content">
+            <span class="auth-showcase-kicker">NOME DO APLICATIVO</span>
+            <h1>Tudo o que você procura,<br />perto de você.</h1>
+            <p>Encontre produtos e serviços de estabelecimentos locais com praticidade e segurança.</p>
+          </div>
+          <div class="auth-showcase-note">Sua escolha local, do seu jeito.</div>
+        </aside>
+        <main class="auth-card auth-panel">
+        <div class="brand auth-brand">
+          <span class="brand-mark"><img class="brand-logo" src="assets/logo.png" alt="NOME DO APLICATIVO" /></span>
+          <div>
+            <p class="brand-name">NOME DO APLICATIVO</p>
+            <small>Produtos e serviços perto de você</small>
+          </div>
+        </div>
+        <div id="profileSelection" class="auth-view">
+          <h1>Bem-vindo ao NOME DO APLICATIVO</h1>
+          <p class="auth-subtitle">Como você deseja entrar?</p>
+          <div class="auth-actions">
+            <button id="clientProfileButton" class="auth-primary-button" type="button">Sou cliente</button>
+            <button id="commerceProfileButton" class="auth-secondary-button" type="button">Sou comércio</button>
+            <button id="generalAdminProfileButton" class="auth-secondary-button" type="button">Administrador</button>
+          </div>
+        </div>
+        <form id="forgotPasswordForm" class="auth-view hidden" novalidate>
+          <h1>Esqueci minha senha</h1>
+          <p class="auth-subtitle">Enviaremos um link para o e-mail cadastrado.</p>
+          <label class="auth-field" for="forgotPasswordEmail">E-mail</label>
+          <input id="forgotPasswordEmail" type="email" maxlength="254" autocomplete="email" required />
+          <p id="forgotPasswordMessage" class="auth-error" aria-live="polite"></p>
+          <button class="auth-primary-button" type="submit">Enviar link</button>
+          <button class="auth-back-button" type="button" data-auth-back>Voltar</button>
+        </form>
+        <form id="updatePasswordForm" class="auth-view hidden" novalidate>
+          <h1>Renovar senha</h1>
+          <label class="auth-field" for="newPassword">Nova senha</label>
+          <input id="newPassword" type="password" autocomplete="new-password" minlength="6" required />
+          <label class="auth-field" for="newPasswordConfirm">Confirmar nova senha</label>
+          <input id="newPasswordConfirm" type="password" autocomplete="new-password" minlength="6" required />
+          <p id="updatePasswordMessage" class="auth-error" aria-live="polite"></p>
+          <button class="auth-primary-button" type="submit">Salvar nova senha</button>
+        </form>
+        <div id="rememberUserModal" class="admin-details-modal hidden" aria-hidden="true">
+          <section class="cancel-order-dialog" role="dialog" aria-modal="true" aria-labelledby="rememberUserTitle">
+            <h2 id="rememberUserTitle">Deseja lembrar este usuário neste dispositivo?</h2>
+            <div class="cancel-order-actions">
+              <button id="rememberUserYes" class="auth-primary-button" type="button">Sim</button>
+              <button id="rememberUserNo" class="admin-secondary-button" type="button">Não</button>
+            </div>
+          </section>
+        </div>
+        <form id="generalAdminLoginForm" class="auth-view hidden">
+          <h1>Entrar como administrador</h1>
+          <label class="auth-field" for="generalAdminEmail">E-mail</label>
+          <input id="generalAdminEmail" type="email" maxlength="254" autocomplete="email" required />
+          <label class="auth-field" for="generalAdminPassword">Senha</label>
+          <div class="input-wrap"><input id="generalAdminPassword" type="password" autocomplete="current-password" required /><button class="password-toggle" type="button" data-password-target="generalAdminPassword">Mostrar</button></div>
+          <button class="auth-back-button" type="button" data-forgot-password="generalAdminEmail">Esqueci minha senha</button>
+          <button class="auth-back-button hidden" type="button" data-use-another-account="generalAdminEmail">Usar outra conta</button>
+          <p id="generalAdminLoginError" class="auth-error" aria-live="polite"></p>
+          <button class="auth-primary-button" type="submit">Entrar</button>
+          <button class="auth-back-button" type="button" data-auth-back>Voltar</button>
+        </form>
+        <form id="clientLoginForm" class="auth-view hidden" novalidate>
+          <h1>Entrar</h1>
+          <p class="auth-subtitle">Acesse seus pedidos e faça novas descobertas.</p>
+          <label class="auth-field" for="clientEmail">E-mail</label>
+          <input id="clientEmail" type="email" maxlength="254" autocomplete="email" required />
+          <label class="auth-field" for="clientPassword">Senha</label>
+          <div class="input-wrap"><input id="clientPassword" type="password" autocomplete="current-password" required /><button class="password-toggle" type="button" data-password-target="clientPassword">Mostrar</button></div>
+          <button class="auth-back-button" type="button" data-forgot-password="clientEmail">Esqueci minha senha</button>
+          <button class="auth-back-button hidden" type="button" data-use-another-account="clientEmail">Usar outra conta</button>
+          <p id="clientLoginError" class="auth-error" aria-live="polite"></p>
+          <button class="auth-primary-button" type="submit">Entrar</button>
+          <button class="google-login-button" type="button" data-google-login="client">Continuar com Google</button>
+          <button id="openClientRegisterButton" class="auth-secondary-button" type="button">Criar conta</button>
+          <button class="auth-back-button" type="button" data-auth-back>Voltar</button>
+        </form>
+        <form id="clientRegisterForm" class="auth-view hidden" novalidate>
+          <h1>Criar conta de cliente</h1>
+          <label class="auth-field" for="registerClientName">Nome</label>
+          <input id="registerClientName" type="text" required />
+          <label class="auth-field" for="registerClientPhone">Telefone</label>
+          <input id="registerClientPhone" type="tel" required />
+          <label class="auth-field" for="registerClientEmail">E-mail</label>
+          <input id="registerClientEmail" type="email" maxlength="254" autocomplete="email" required />
+          <label class="auth-field" for="registerClientPassword">Senha</label>
+          <div class="input-wrap"><input id="registerClientPassword" type="password" autocomplete="new-password" required minlength="6" /><button class="password-toggle" type="button" data-password-target="registerClientPassword">Mostrar</button></div>
+          <label class="auth-field" for="registerClientPasswordConfirm">Confirmar senha</label>
+          <div class="input-wrap"><input id="registerClientPasswordConfirm" type="password" autocomplete="new-password" required minlength="6" /><button class="password-toggle" type="button" data-password-target="registerClientPasswordConfirm">Mostrar</button></div>
+          <p id="clientRegisterError" class="auth-error" aria-live="polite"></p>
+          <button class="auth-primary-button" type="submit">Criar conta</button>
+          <button class="google-login-button" type="button" data-google-login="client">Continuar com Google</button>
+          <button class="auth-back-button" type="button" data-auth-back>Voltar</button>
+        </form>
+        <form id="commerceLoginForm" class="auth-view hidden" novalidate>
+          <h1>Acessar painel do comércio</h1>
+          <p class="auth-subtitle">Acesse pedidos, produtos e a operação do estabelecimento.</p>
+          <label class="auth-field" for="commerceEmail">E-mail</label>
+          <input id="commerceEmail" type="email" maxlength="254" autocomplete="email" required />
+          <label class="auth-field" for="commercePassword">Senha</label>
+          <div class="input-wrap"><input id="commercePassword" type="password" autocomplete="current-password" required /><button class="password-toggle" type="button" data-password-target="commercePassword">Mostrar</button></div>
+          <button class="auth-back-button" type="button" data-forgot-password="commerceEmail">Esqueci minha senha</button>
+          <button class="auth-back-button hidden" type="button" data-use-another-account="commerceEmail">Usar outra conta</button>
+          <p id="commerceLoginError" class="auth-error" aria-live="polite"></p>
+          <button class="auth-primary-button" type="submit">Entrar</button>
+          <button class="google-login-button" type="button" data-google-login="commerce">Continuar com Google</button>
+          <button id="openCommerceRegisterButton" class="auth-secondary-button" type="button">Cadastrar meu comércio</button>
+<button class="auth-back-button" type="button" data-auth-back>Voltar</button>
+        </form>
+
+        <form id="commerceRegisterForm" class="auth-view commerce-form hidden"><h2>Cadastrar comércio</h2><label class="commerce-field">Nome do comércio<input id="registerCommerceName" type="text" required  /></label><label class="commerce-field">Responsável<input id="registerCommerceOwner" type="text" required  /></label><label class="commerce-field">CPF ou CNPJ<input id="registerCommerceDocument" type="text" required  /></label><label class="commerce-field">Telefone<input id="registerCommercePhone" type="tel" required  /></label><label class="commerce-field">E-mail<input id="registerCommerceEmail" type="email" required  /></label><label class="commerce-field">Senha<input id="registerCommercePassword" type="password" required minlength="6" autocomplete="new-password" /></label><label class="commerce-field">Confirmar senha<input id="registerCommercePasswordConfirm" type="password" required minlength="6" autocomplete="new-password" /></label><label class="commerce-field">Categoria<input id="registerCommerceCategory" type="text" required  /></label><label class="commerce-field">Endereço<input id="registerCommerceStreet" type="text" required  /></label><label class="commerce-field">Número<input id="registerCommerceNumber" type="text" required  /></label><label class="commerce-field">Bairro<input id="registerCommerceNeighborhood" type="text" required  /></label><label class="commerce-field">Complemento<input id="registerCommerceComplement" type="text"   /></label><label class="commerce-field">Abertura<input id="registerCommerceOpening" type="text" inputmode="numeric" maxlength="5" placeholder="18:00" required  /></label><label class="commerce-field">Fechamento<input id="registerCommerceClosing" type="text" inputmode="numeric" maxlength="5" placeholder="19:00" required  /></label><p id="commerceRegisterError" class="form-message error" role="status"></p><button type="submit" class="auth-primary-button">Cadastrar comércio</button><button id="cancelCommerceRegisterButton" type="button" class="auth-back-button">Voltar</button></form>
+        </main>
+      </div>
+    </section>
+    <div id="clientApp" class="app-shell hidden">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark"><img class="brand-logo" src="assets/logo.png" alt="NOME DO APLICATIVO" /></span>
+          <div>
+            <p class="brand-name">NOME DO APLICATIVO</p>
+            <small>Marketplace local</small>
+          </div>
+        </div>
+        <div class="topbar-actions"><button id="clientOrdersButton" class="checkout-back-button" type="button">Meus pedidos</button><button id="clientLogoutButton" class="checkout-back-button" type="button">Sair</button>
+          <button id="openAdminButton" class="menu-trigger" type="button" aria-label="Abrir menu administrativo" aria-expanded="false" aria-controls="adminPanel">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </header>
+      <main class="content">
+        <section class="search-panel">
+          <label class="search-label" for="searchInput">Buscar</label>
+          <div class="search-box">
+            <span class="search-icon">🔎</span>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="O que você está procurando?"
+            />
+          </div>
+        </section>
+        <section class="categories-panel">
+          <div class="section-header">
+            <h2>Categorias</h2>
+          </div>
+          <div id="categoryList" class="category-list"></div>
+        </section>
+        <section class="stores-panel">
+          <div id="supportCarousel" class="support-carousel" aria-label="Atalhos do NOME DO APLICATIVO">
+          <a class="store-card support-card" data-carousel-card data-card-action="support" href="https://wa.me/5566992572531?text=Ol%C3%A1%2C%20aqui%20%C3%A9%20o%20suporte%20t%C3%A9cnico%20do%20Apiac%C3%A1s%20Delivery.%20Em%20que%20podemos%20ajudar%3F" target="_blank" rel="noopener" aria-label="Falar com o suporte técnico pelo WhatsApp">
+            <img src="assets/suporte-24-horas.jfif" alt="Suporte 24 horas" />
+          </a>
+            <div id="promotionsCard" class="promo-slide" data-carousel-card data-card-action="promotions" role="button" tabindex="0" aria-label="Abrir promoções">
+              <img src="assets/promocoes.jfif" alt="Promoções: confira ofertas e descontos disponíveis no NOME DO APLICATIVO." />
+            </div>
+          </div>
+        </section>
+        <section class="stores-panel">
+          <div class="section-header section-header-row">
+            <h2>Comércios</h2>
+            <span id="resultsCount" class="results-count">0</span>
+          </div>
+          <div id="storeList" class="store-list"></div>
+        </section>
+      </main>
+    </div>
+    <div id="statusMessage" class="status-message" aria-live="polite"></div>
+    <section id="clientOrdersPage" class="client-orders-page hidden" aria-labelledby="clientOrdersTitle">
+      <header class="client-orders-header"><h1 id="clientOrdersTitle">Meus pedidos</h1><button id="clientOrdersBackButton" class="checkout-back-button" type="button">Voltar às lojas</button></header>
+      <p>Acompanhe seu pedido. O comércio atualizará o status durante o preparo e a entrega.</p>
+      <div id="clientOrdersList" aria-live="polite"></div>
+    </section>
+    <aside id="menuPanel" class="menu-panel hidden" aria-hidden="true">
+      <div class="panel-sheet menu-sheet">
+        <div class="menu-header">
+          <button id="closeMenu" class="close-menu" type="button" aria-label="Fechar menu">←</button>
+          <div class="menu-title-box">
+            <p id="menuStoreCategory" class="menu-store-category">Categoria</p>
+            <h2 id="menuStoreName">Nome do comércio</h2>
+          </div>
+          <div id="menuStoreRating" class="menu-store-rating">⭐ 0.0</div>
+        </div>
+        <div id="menuProducts" class="menu-products"></div>
+      </div>
+    </aside>
+    <button id="cartButton" class="cart-button hidden" type="button" aria-label="Abrir carrinho">
+      <span class="cart-button-text">Carrinho · <span id="cartCount" class="cart-count">0</span> itens</span>
+      <span id="cartTotalPreview"></span>
+    </button>
+    <aside id="cartPanel" class="cart-panel hidden" aria-hidden="true">
+      <div class="panel-sheet cart-sheet">
+        <div class="cart-header">
+          <div>
+            <p class="cart-label">Seu pedido</p>
+            <h2>Carrinho</h2>
+          </div>
+          <button id="closeCart" class="close-cart" type="button" aria-label="Fechar carrinho">✕</button>
+        </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <strong id="subtotalValue">R$ 0,00</strong>
+          </div>
+          <div class="summary-row total-row">
+            <span>Total</span>
+            <strong id="totalValue">R$ 0,00</strong>
+          </div>
+          <button id="finishOrderButton" class="finish-order-button" type="button" disabled>
+            Finalizar pedido
+          </button>
+        </div>
+      </div>
+    </aside>
+    <aside id="checkoutPanel" class="checkout-panel hidden" aria-hidden="true">
+      <div class="panel-sheet checkout-sheet">
+        <div class="checkout-header">
+          <button id="closeCheckout" class="close-menu" type="button" aria-label="Fechar finalização">←</button>
+          <div class="checkout-header-text">
+            <p class="cart-label">Último passo</p>
+            <h2>Finalizar pedido</h2>
+          </div>
+          <button id="backToCartButton" class="checkout-back-button" type="button">Voltar ao carrinho</button>
+        </div>
+        <div id="checkoutContent" class="checkout-content">
+          <form id="checkoutForm" class="checkout-form">
+            <div class="input-group">
+              <label for="fullName">Nome completo</label>
+              <input id="fullName" name="fullName" type="text" required />
+            </div>
+            <div class="input-group">
+              <label for="phone">Telefone</label>
+              <input id="phone" name="phone" type="tel" required />
+            </div>
+            <div class="input-group">
+              <label for="address">Endereço</label>
+              <input id="address" name="address" type="text" required />
+            </div>
+            <div class="input-row">
+              <div class="input-group">
+                <label for="number">Número</label>
+                <input id="number" name="number" type="text" required />
+              </div>
+              <div class="input-group">
+                <label for="neighborhood">Bairro</label>
+                <input id="neighborhood" name="neighborhood" type="text" required />
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="complement">Complemento</label>
+              <input id="complement" name="complement" type="text" />
+            </div>
+            <div class="input-group">
+              <label for="reference">Ponto de referência</label>
+              <input id="reference" name="reference" type="text" />
+            </div>
+            <div class="input-group">
+              <label for="orderNote">Observação do pedido</label>
+              <textarea id="orderNote" name="orderNote" rows="3"></textarea>
+            </div>
+            <fieldset class="fulfillment-section">
+              <legend>Como deseja receber?</legend>
+              <div class="fulfillment-options">
+                <label class="fulfillment-option"><input type="radio" name="fulfillmentMethod" value="delivery" checked /><span><strong>Entrega</strong><small>Receba no endereço informado</small></span></label>
+                <label class="fulfillment-option"><input type="radio" name="fulfillmentMethod" value="pickup" /><span><strong>Retirada</strong><small>Retire no estabelecimento</small></span></label>
+              </div>
+              <p class="fulfillment-note">A taxa, o prazo e o horário disponíveis serão informados antes da confirmação.</p>
+            </fieldset>
+            <fieldset class="payment-section">
+              <legend>Forma de pagamento</legend>
+              <div class="payment-options">
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="pix" required />
+                  <span class="payment-option-content">
+                    <strong>PIX</strong>
+                    <small>Pagamento instantâneo</small>
+                  </span>
+                </label>
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="cash" />
+                  <span class="payment-option-content">
+                    <strong>Dinheiro</strong>
+                    <small>Informe o valor para troco</small>
+                  </span>
+                </label>
+                <label class="payment-option">
+                  <input type="radio" name="paymentMethod" value="credit" />
+                  <span class="payment-option-content">
+                    <strong>Crédito na entrega</strong>
+                    <small>Maquininha na chegada</small>
+                  </span>
+                </label><label class="payment-option"><input type="radio" name="paymentMethod" value="debit" /><span class="payment-option-content"><strong>Débito na entrega</strong><small>Pague na entrega.</small></span></label>
+              </div>
+              <p id="paymentAvailabilityMessage" class="form-message" role="status"></p><div id="cashChangeGroup" class="input-group cash-change-group hidden">
+                <label for="cashAmount">Troco para quanto?</label>
+                <div class="currency-input">
+                  <span>R$</span>
+                  <input id="cashAmount" name="cashAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00" />
+                </div>
+                <p id="cashChangeMessage" class="cash-change-message" aria-live="polite"></p>
+              </div>
+            </fieldset>
+            <div class="checkout-summary-box">
+              <h3>Resumo</h3>
+              <div id="checkoutSummaryList" class="checkout-summary-list"></div>
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <strong id="checkoutSubtotal">R$ 0,00</strong>
+              </div>
+              <div class="summary-row">
+                <span>Taxa de entrega / serviço</span>
+                <strong id="checkoutDeliveryFee">R$ 0,00</strong>
+              </div>
+              <div id="checkoutPaymentSummary" class="payment-summary"></div>
+              <div class="summary-row total-row">
+                <span>Total</span>
+                <strong id="checkoutTotal">R$ 0,00</strong>
+              </div>
+            </div>
+            <button type="submit" class="confirm-order-button">Confirmar pedido</button>
+          </form>
+        </div>
+        <div id="checkoutSuccess" class="checkout-success hidden">
+          <div class="success-icon">✓</div>
+          <h3>Pedido realizado com sucesso!</h3>
+          <p id="successOrderNumber">Pedido: #APC-0000</p>
+          <div id="successDeliveryStatus" class="success-delivery-status"></div>
+          <div id="successSummary" class="success-summary"></div>
+          <button id="backHomeButton" class="confirm-order-button" type="button">Voltar para a página inicial</button>
+        </div>
+      </div>
+    </aside>
+    <aside id="adminPanel" class="admin-panel hidden" aria-hidden="true">
+      <div class="admin-sheet">
+        <div id="adminMenuOverlay" class="admin-menu-overlay hidden" aria-hidden="true"></div>
+        <aside id="adminSidebar" class="admin-sidebar" aria-label="Menu do comércio" aria-hidden="true">
+          <div class="admin-sidebar-header">
+            <div>
+              <p class="cart-label">NOME DO APLICATIVO</p>
+              <strong>Menu do comércio</strong>
+            </div>
+            <button id="closeAdminButton" class="close-cart" type="button" aria-label="Fechar menu do comércio">✕</button>
+          </div>
+          <nav class="admin-navigation" aria-label="Navegação do comércio">
+            <button class="admin-navigation-button" type="button" data-admin-page="profile"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" /></svg></span>Meus dados</button>
+            <button class="admin-navigation-button active" type="button" data-admin-page="orders" aria-current="page"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16" /></svg></span>Pedidos</button>
+            <button class="admin-navigation-button" type="button" data-admin-page="reports"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 3v17h17M8 16v-5m5 5V7m5 9V4" /></svg></span>Relatório</button>
+            <button class="admin-navigation-button" type="button" data-admin-page="products"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="5" ry="7" /><path d="M2 3v5a2 2 0 0 0 4 0V3M4 3v18M22 3c-3 2-3 7 0 9V3Zm0 9v9" /></svg></span>Produtos</button>
+            <button class="admin-navigation-button" type="button" data-admin-page="settings"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9.5 3-.5 2.5-2 1.2-2.4-.8-2.5 4.2L4 11.8v2.4l-1.9 1.7 2.5 4.2 2.4-.8 2 1.2.5 2.5h5l.5-2.5 2-1.2 2.4.8 2.5-4.2-1.9-1.7v-2.4l1.9-1.7-2.5-4.2-2.4.8-2-1.2-.5-2.5Z" transform="translate(0 -1)" /><circle cx="12" cy="12" r="3.5" /></svg></span>Configurações</button>
+            <button class="admin-navigation-button admin-navigation-exit" type="button" data-admin-page="exit"><span class="admin-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg></span>Sair</button>
+          </nav>
+        </aside>
+        <main class="admin-main">
+          <header class="admin-header">
+            <div>
+              <p class="cart-label">Painel administrativo</p>
+              <h2 id="adminPageTitle">Pedidos</h2>
+            </div>
+            <div class="admin-header-actions">
+              <button id="adminMenuButton" class="menu-trigger admin-menu-trigger" type="button" aria-label="Abrir menu do comércio" aria-expanded="false" aria-controls="adminSidebar">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+            </div>
+          </header>
+          <section id="adminOrdersPage" class="admin-page">
+            <div class="admin-toolbar">
+              <div class="admin-counts">
+                <strong>Pedidos pendentes: <span id="adminPendingCount">0</span> <span id="adminUnreadCount" class="admin-unread-count">0 novos</span></strong>
+              </div>
+              <button id="refreshAdminButton" class="admin-refresh-button admin-refresh-icon" type="button" aria-label="Atualizar pedidos" title="Atualizar pedidos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6.1 7a7 7 0 0 1 11.5-1L20 9M4 15l2.4 3A7 7 0 0 0 17.9 17" /></svg></button>
+            </div>
+            <div class="admin-tabs" aria-label="Filtrar pedidos"><button type="button" class="admin-tab active" data-order-filter="new" aria-pressed="true">Novos</button><button type="button" class="admin-tab" data-order-filter="active" aria-pressed="false">Ativos</button><button type="button" class="admin-tab" data-order-filter="completed" aria-pressed="false">Concluídos</button></div><div id="adminActiveOrders" class="admin-order-list">
+              <div class="admin-section-heading"><h3>Pedidos pendentes</h3><span id="adminPendingSectionCount">0</span></div>
+              <div id="adminPendingOrderList" class="admin-order-group"></div>
+            </div>
+          <section id="adminHistoryPage" class="hidden">
+            <div class="admin-toolbar"><div class="admin-counts"><strong>Pedidos no histórico: <span id="adminHistoryCount">0</span></strong></div></div>
+            <div class="admin-order-list">
+              <div class="admin-section-heading"><h3>Histórico</h3><span id="adminHistorySectionCount">0</span></div>
+              <div id="adminHistoryOrderList" class="admin-order-group"></div>
+            </div>
+          </section>
+          </section>
+          <section id="adminStorePage" class="admin-page hidden">
+            <div class="admin-page-intro"><p class="cart-label">Perfil do comércio</p><h3>Meus dados</h3><p>Consulte os dados e controle o recebimento de pedidos.</p></div>
+<form id="commerceDataForm" class="admin-info-card commerce-form">
+<h3>Dados do cadastro</h3><p>Alterações nestes dados dependem de autorização dos administradores.</p>
+<dl class="commerce-fields commerce-registration">
+<div><dt>CNPJ</dt><dd data-commerce-registration="document"></dd></div>
+<div><dt>Nome do estabelecimento</dt><dd id="adminStoreName" data-commerce-registration="name"></dd></div>
+<div><dt>Responsável</dt><dd data-commerce-registration="responsible"></dd></div>
+<div><dt>Endereço</dt><dd data-commerce-registration="address"></dd></div>
+<div><dt>Bairro</dt><dd data-commerce-registration="neighborhood"></dd></div>
+<div><dt>Número</dt><dd data-commerce-registration="number"></dd></div>
+</dl><h3>Contato e funcionamento</h3><div class="commerce-fields">
+<label class="commerce-field">Telefone<input name="phone" type="tel" /></label>
+<label class="commerce-field">E-mail<input name="email" type="email" /></label>
+<label class="commerce-field">Horário de funcionamento<input name="hours" type="text" /></label>
+<div class="commerce-field"><span>Status do cadastro</span><strong id="commerceAccountStatus" aria-live="polite"></strong></div>
+</div><label class="commerce-toggle"><span>Comércio aberto <strong id="storeStatusMessage" aria-live="polite"></strong></span><span class="switch"><input id="storeOpenToggle" name="isOpen" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label>
+<button class="auth-primary-button" type="submit">Salvar alterações</button><p class="form-message" role="status"></p></form>
+                    </section><section id="adminProductsPage" class="admin-page commerce-products-section hidden">
+            <div class="admin-page-intro"><p class="cart-label">Catálogo</p><h3>Meus produtos e serviços</h3><p id="adminProductSummary">0 de 0 produtos disponíveis</p></div>
+            <div class="admin-info-card"><button id="openProductFormButton" type="button" class="auth-primary-button">Adicionar produto ou serviço</button><div class="product-toolbar"><input id="commerceProductSearch" type="search" placeholder="Buscar produto" aria-label="Buscar produto" /><select id="commerceProductCategoryFilter" aria-label="Categoria dos produtos"><option value="">Todas as categorias</option></select></div></div><form id="productEditor" class="admin-info-card commerce-form hidden" novalidate>
+<h3 id="productEditorTitle">Adicionar produto</h3><div class="commerce-fields">
+<input name="storeId" type="hidden" value="1" /><input name="type" type="hidden" value="product" /><label class="commerce-field">Nome<input name="name" required maxlength="100" /></label><label class="commerce-field">Categoria<input name="category" required /></label>
+<label class="commerce-field">Valor (R$)<input name="price" type="text" inputmode="decimal" placeholder="25,50" required /></label><label class="commerce-field">Prazo estimado (minutos)<input name="preparationTime" type="number" min="0" step="1" placeholder="Ex.: 30" /></label>
+<label class="commerce-field">Descrição<input name="description" required maxlength="500" /></label>
+<label class="commerce-field">Imagem do produto<input name="imageFile" type="file" accept="image/jpeg,image/png,image/webp" required /></label></div>
+<button id="saveProductButton" class="auth-primary-button" type="submit">Novo produto ou serviço</button><button id="cancelProductButton" class="admin-secondary-button" type="button">Cancelar</button><button id="cancelProductEdit" class="admin-danger-button hidden" type="button">Excluir produto</button><p class="form-message" role="status"></p></form>
+<div id="adminProductAvailabilityList" class="admin-product-availability-list"></div>
+          </section>
+          <section id="adminReportsPage" class="admin-page hidden"><div class="admin-page-intro"><h3>Relatório de vendas</h3><p>Pedidos entregues, por data do pedido. Vendas de produtos sem a taxa de entrega.</p></div><div class="admin-info-card"><label class="commerce-field">Período<select id="reportPeriod"><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="all">Todo o período</option></select></label><div id="salesMetrics" class="sales-metrics"></div><h3>Vendas por dia</h3><div id="salesChart" class="sales-chart"></div></div></section>
+<section id="adminSettingsPage" class="admin-page hidden">
+            <div class="admin-page-intro"><p class="cart-label">Preferências</p><h3>Configurações</h3><p>Ajustes básicos do painel administrativo.</p></div>
+            <form id="commerceSettingsForm" class="admin-info-card commerce-form"><label class="commerce-toggle"><span>Notificações de novos pedidos</span><span class="switch"><input name="notifications" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><label class="commerce-toggle"><span>Atualização automática</span><span class="switch"><input name="autoRefresh" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><label class="commerce-field">Intervalo de atualização (segundos)<select name="refreshInterval" required><option value="5">5 segundos</option><option value="10">10 segundos</option><option value="30">30 segundos</option><option value="60">60 segundos</option></select></label><label class="commerce-toggle"><span>Confirmação antes de cancelar</span><span class="switch"><input name="confirmCancellation" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><label class="commerce-toggle"><span>Modo escuro do app</span><span class="switch"><input name="darkMode" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><div class="admin-commercial-model admin-info-card">
+              <div class="admin-page-intro"><p class="cart-label">Modelo comercial</p><h3>Configuração futura</h3><p>Campos preparados para planos e limites. Nenhuma cobrança ou bloqueio automático nesta etapa.</p></div>
+              <div class="commercial-model-grid">
+                <label class="commerce-field">Plano<select name="commercialPlan"><option>Plano inicial</option><option>Plano profissional</option><option>Plano destaque</option></select></label>
+                <label class="commerce-field">Mensalidade<input name="commercialMonthlyFee" type="number" min="0" step="0.01" placeholder="0,00" /></label>
+                <label class="commerce-field">Limite de produtos<input name="commercialProductLimit" type="number" min="0" placeholder="Sem limite" /></label>
+                <label class="commerce-field">Limite de pedidos<input name="commercialOrderLimit" type="number" min="0" placeholder="Sem limite" /></label>
+                <label class="commerce-field">Comissão por venda (%)<input name="commercialCommission" type="number" min="0" max="100" step="0.01" placeholder="0" /></label>
+                <label class="commerce-toggle"><span>Destaque na busca</span><span class="switch"><input name="commercialFeatured" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label>
+              </div>
+              <span class="status-badge status-badge-neutral">Somente configuração visual</span>
+            </div>
+            <button class="auth-primary-button" type="submit">Salvar configurações</button><p class="form-message" role="status"></p></form>
+                    <section id="adminPaymentsPage">
+            <div class="admin-page-intro"><p class="cart-label">Recebimentos</p><h3>Formas de pagamento</h3><p>Formas aceitas nos pedidos do comércio.</p></div>
+            <form id="paymentSettingsForm" class="admin-info-card commerce-form"><label class="commerce-toggle"><span>PIX</span><span class="switch"><input name="pix" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><label class="commerce-toggle"><span>Dinheiro</span><span class="switch"><input name="cash" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><label class="commerce-toggle"><span>Crédito na entrega</span><span class="switch"><input name="credit" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><label class="commerce-toggle"><span>Débito na entrega</span><span class="switch"><input name="debit" type="checkbox" role="switch" /><span class="switch-slider"></span></span></label><fieldset id="pixFields" class="commerce-fields"><legend>Dados do PIX</legend><label class="commerce-field">Tipo da chave<select name="pixType"><option value="cpf">CPF</option><option value="cnpj">CNPJ</option><option value="email">E-mail</option><option value="phone">Telefone</option><option value="random">Aleatória</option></select></label><label class="commerce-field">Chave<input name="pixKey" type="text" /></label><label class="commerce-field">Titular<input name="pixHolder" type="text" /></label></fieldset><button class="auth-primary-button" type="submit">Salvar pagamentos</button><p class="form-message" role="status"></p></form>
+          </section></section>
+        </main>
+      </div>
+    </aside>
+    <div id="adminDetailsModal" class="admin-details-modal hidden" aria-hidden="true">
+      <section class="admin-details-dialog" role="dialog" aria-modal="true" aria-labelledby="adminDetailsTitle">
+        <header class="admin-details-header">
+          <h2 id="adminDetailsTitle">Detalhes do pedido</h2>
+          <button id="closeAdminDetailsButton" class="close-cart" type="button" aria-label="Fechar detalhes do pedido">✕</button>
+        </header>
+        <section id="adminOrderDetails" class="admin-order-details" aria-live="polite"></section>
+        <button id="closeAdminDetailsFooterButton" class="confirm-order-button admin-details-close-button" type="button">Fechar detalhes</button>
+      </section>
+    </div>
+    <div id="cancelOrderModal" class="admin-details-modal hidden" aria-hidden="true">
+      <section class="cancel-order-dialog" role="dialog" aria-modal="true" aria-labelledby="cancelOrderTitle">
+        <header class="admin-details-header">
+          <h2 id="cancelOrderTitle">Cancelar pedido?</h2>
+          <button id="closeCancelOrderButton" class="close-cart" type="button" aria-label="Fechar confirmação de cancelamento">✕</button>
+        </header>
+        <div class="cancel-order-content">
+          <p>Tem certeza que deseja cancelar este pedido?</p>
+          <label class="cancel-reason-label" for="cancelReasonInput">Motivo do cancelamento</label>
+          <textarea id="cancelReasonInput" class="cancel-reason-input" rows="4" required></textarea>
+          <p id="cancelReasonError" class="cancel-reason-error" aria-live="polite"></p>
+        </div>
+        <div class="cancel-order-actions">
+          <button id="keepOrderButton" class="admin-secondary-button" type="button">Não, voltar</button>
+          <button id="confirmCancelOrderButton" class="admin-danger-button" type="button">Sim, cancelar pedido</button>
+        </div>
+      </section>
+    </div>
+    <div id="deliveryConfirmModal" class="admin-details-modal hidden" aria-hidden="true">
+      <section class="cancel-order-dialog" role="dialog" aria-modal="true" aria-labelledby="deliveryConfirmTitle">
+        <header class="admin-details-header">
+          <h2 id="deliveryConfirmTitle">Confirmar entrega?</h2>
+        </header>
+        <div class="cancel-order-content">
+          <p>Você confirma que recebeu este pedido?</p>
+        </div>
+        <div class="cancel-order-actions">
+          <button id="cancelDeliveryButton" class="admin-secondary-button" type="button">Não, voltar</button>
+          <button id="confirmDeliveryButton" class="auth-primary-button" type="button">Sim, recebi</button>
+        </div>
+      </section>
+    </div>
+    <section id="generalAdminPanel" class="general-admin-panel hidden" aria-labelledby="generalAdminTitle">
+      <header class="client-orders-header"><h1 id="generalAdminTitle">Administração geral</h1><button id="generalAdminLogout" class="checkout-back-button" type="button">Sair</button></header>
+      <nav class="admin-tabs" aria-label="Administração geral">
+        <button class="admin-tab active" type="button" data-general-page="dashboard">Dashboard</button>
+        <button class="admin-tab" type="button" data-general-page="commerces">Comércios</button>
+        <button class="admin-tab" type="button" data-general-page="profiles">Usuários</button>
+      </nav>
+      <p id="generalAdminMessage" class="form-message" role="status"></p>
+      <div id="generalAdminDashboard" class="admin-info-card sales-metrics"></div>
+      <div id="generalAdminDirectory" class="hidden">
+        <form id="generalAdminSearchForm" class="product-toolbar">
+          <input id="generalAdminSearch" type="search" placeholder="Pesquisar por nome" aria-label="Pesquisar por nome" />
+          <button class="auth-primary-button" type="submit">Pesquisar</button>
+        </form>
+        <div id="generalAdminList" aria-live="polite"></div>
+        <div class="client-orders-header"><button id="generalAdminPrevious" class="checkout-back-button" type="button">Anterior</button><span id="generalAdminPageNumber"></span><button id="generalAdminNext" class="checkout-back-button" type="button">Próxima</button></div>
+      </div>
+      <section id="generalAdminDetails" class="admin-info-card hidden" aria-label="Cadastro selecionado">
+        <button id="generalAdminCloseDetails" class="checkout-back-button" type="button">Voltar à lista</button>
+        <div id="generalAdminProfileDetails"></div>
+        <form id="generalAdminCommerceForm" class="commerce-form hidden">
+          <div id="generalAdminCommerceFields" class="commerce-fields"></div>
+          <button class="auth-primary-button" type="submit">Salvar comércio</button>
+        </form>
+      </section>
+    </section>
+    <div id="modeSwitcher" class="mode-switcher hidden">
+      <button id="modeSwitcherButton" class="mode-switcher-button" type="button" aria-expanded="false" aria-controls="modeSwitcherOptions">Trocar modo</button>
+      <div id="modeSwitcherOptions" class="mode-switcher-options" role="menu">
+        <button type="button" data-mode-option="admin" role="menuitem">Admin</button>
+        <button type="button" data-mode-option="commerce" role="menuitem">Comércio</button>
+        <button type="button" data-mode-option="client" role="menuitem">Cliente</button>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

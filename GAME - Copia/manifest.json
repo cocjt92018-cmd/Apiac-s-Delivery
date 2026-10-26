@@ -1,0 +1,7 @@
+{
+  "name": "NOME DO APLICATIVO",
+  "short_name": "NOME DO APLICATIVO",
+  "icons": [
+    { "src": "assets/logo-marketplace.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

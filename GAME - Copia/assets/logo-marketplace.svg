@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Logo provisória do marketplace</title>
+  <desc id="desc">Ícone laranja neutro formado por uma etiqueta e pontos de conexão.</desc>
+  <defs>
+    <linearGradient id="orange" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fb923c"/>
+      <stop offset="1" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="#fff7ed"/>
+  <path d="M25 43.5A8.5 8.5 0 0 1 33.5 35H68l35 35-33 33a8.5 8.5 0 0 1-12 0L27.5 72.5A8.5 8.5 0 0 1 25 66.5Z" fill="url(#orange)"/>
+  <circle cx="43" cy="52" r="6" fill="#fff7ed"/>
+  <path d="M68 55.5 80.5 68 68 80.5 55.5 68Z" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M68 55.5v25M55.5 68h25" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".9"/>
+</svg>
